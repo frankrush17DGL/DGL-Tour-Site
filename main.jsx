@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Trophy, CalendarDays, Users, Flame, Landmark, BadgeDollarSign } from 'lucide-react';
 import './styles.css';
-import data from '../data/dgl-data.json';
+import data ./data/dgl-data.json';
 
 const money = v => v == null ? '—' : `$${Number(v).toLocaleString(undefined,{maximumFractionDigits:2})}`;
 
