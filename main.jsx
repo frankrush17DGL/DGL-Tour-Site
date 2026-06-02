@@ -12,6 +12,15 @@ function App() {
   return (
     <main className="page">
       <section className="hero">
+        <img
+  src="/dgl-logo.jpeg"
+  alt="DGL Tour Logo"
+  style={{
+    width: "140px",
+    maxWidth: "40vw",
+    marginBottom: "20px"
+  }}
+/>
         <div className="badge">EST. 2021</div>
         <h1>DGL TOUR</h1>
         <p className="tagline">Official Home of the Dojo Golf League</p>
