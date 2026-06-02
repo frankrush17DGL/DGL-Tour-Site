@@ -339,7 +339,13 @@ function App() {
             <div className="pot"><span>🎯</span><small>Hole-in-One</small><strong>{money(data.sidePots.holeInOne)}</strong></div>
             <div className="pot"><span>🏖️</span><small>Sandy Pot</small><strong>{money(data.sidePots.sandy)}</strong></div>
           </div>
-          <p className="note">Last hit: Scott Wishart — 2025 Eagle Pot ($117.50)</p>
+          <p className="note">
+Eagle Pot Last Hit<br/>
+Scott Wishart<br/>
+Dutch 27 (Red 9)<br/>
+Hole #5 • 520-yard Par 5<br/>
+9/26/25 • Paid $117.50
+</p>
         </article>
 
         <article className="card events-card" id="events">
