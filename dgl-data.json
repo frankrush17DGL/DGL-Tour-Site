@@ -1,0 +1,929 @@
+{
+  "sheetId": "1ih9-i3Bfd_N-gD1vBY88bu5c0lGaXT-c80ppXrU95Tw",
+  "currentYear": "2026",
+  "standingsByYear": {
+    "2026": [
+      {
+        "player": "Alex Pletsch",
+        "points": 8,
+        "events": 2,
+        "rank": 1
+      },
+      {
+        "player": "Brian Nevala",
+        "points": 8,
+        "events": 2,
+        "rank": 2
+      },
+      {
+        "player": "Ben Magnuson",
+        "points": 8,
+        "events": 2,
+        "rank": 3
+      },
+      {
+        "player": "Scoot Wishart",
+        "points": 8,
+        "events": 2,
+        "rank": 4
+      },
+      {
+        "player": "Alex Rogers",
+        "points": 8,
+        "events": 2,
+        "rank": 5
+      },
+      {
+        "player": "Keegan Anderson",
+        "points": 8,
+        "events": 2,
+        "rank": 6
+      },
+      {
+        "player": "Anthony Gross",
+        "points": 8,
+        "events": 2,
+        "rank": 7
+      },
+      {
+        "player": "Steven Mitchell",
+        "points": 8,
+        "events": 2,
+        "rank": 8
+      },
+      {
+        "player": "Joe Grannes",
+        "points": 8,
+        "events": 2,
+        "rank": 9
+      },
+      {
+        "player": "Klappy",
+        "points": 8,
+        "events": 2,
+        "rank": 10
+      },
+      {
+        "player": "Chris D",
+        "points": 8,
+        "events": 2,
+        "rank": 11
+      },
+      {
+        "player": "Charles Kordonowy",
+        "points": 6.3,
+        "events": 4,
+        "rank": 12
+      },
+      {
+        "player": "Kyle Odegaard",
+        "points": 6.3,
+        "events": 4,
+        "rank": 13
+      },
+      {
+        "player": "Frank Rush",
+        "points": 5.95,
+        "events": 7,
+        "rank": 14
+      },
+      {
+        "player": "Max Olson",
+        "points": 3.6,
+        "events": 5,
+        "rank": 15
+      },
+      {
+        "player": "John Leitch",
+        "points": 3.6,
+        "events": 5,
+        "rank": 16
+      },
+      {
+        "player": "Nic Wendel",
+        "points": 3.6,
+        "events": 5,
+        "rank": 17
+      },
+      {
+        "player": "Tim P.",
+        "points": 3.0,
+        "events": 5,
+        "rank": 18
+      },
+      {
+        "player": "Sam T.",
+        "points": 0.15,
+        "events": 1,
+        "rank": 19
+      }
+    ],
+    "2025": [
+      {
+        "player": "Charles Kordonowy",
+        "points": 15,
+        "events": 2,
+        "rank": 1
+      },
+      {
+        "player": "Anthony Gross",
+        "points": 15,
+        "events": 2,
+        "rank": 2
+      },
+      {
+        "player": "Steven Mitchell",
+        "points": 15,
+        "events": 2,
+        "rank": 3
+      },
+      {
+        "player": "Klappy",
+        "points": 15,
+        "events": 2,
+        "rank": 4
+      },
+      {
+        "player": "Chris D",
+        "points": 15,
+        "events": 2,
+        "rank": 5
+      },
+      {
+        "player": "Keegan Anderson",
+        "points": 13.3,
+        "events": 4,
+        "rank": 6
+      },
+      {
+        "player": "Tom H.",
+        "points": 13.15,
+        "events": 3,
+        "rank": 7
+      },
+      {
+        "player": "Alex Pletsch",
+        "points": 12.4,
+        "events": 4,
+        "rank": 8
+      },
+      {
+        "player": "Ben Magnuson",
+        "points": 9.6,
+        "events": 5,
+        "rank": 9
+      },
+      {
+        "player": "Alex Rogers",
+        "points": 9.6,
+        "events": 5,
+        "rank": 10
+      },
+      {
+        "player": "Michael",
+        "points": 9.6,
+        "events": 5,
+        "rank": 11
+      },
+      {
+        "player": "John Leitch",
+        "points": 8.9,
+        "events": 6,
+        "rank": 12
+      },
+      {
+        "player": "Nic Wendel",
+        "points": 8.75,
+        "events": 6,
+        "rank": 13
+      },
+      {
+        "player": "Max Olson",
+        "points": 7.35,
+        "events": 7,
+        "rank": 14
+      },
+      {
+        "player": "Frank Rush",
+        "points": 7.27,
+        "events": 14,
+        "rank": 15
+      },
+      {
+        "player": "Joe Grannes",
+        "points": 7.12,
+        "events": 8,
+        "rank": 16
+      },
+      {
+        "player": "Kyle Odegaard",
+        "points": 7.1,
+        "events": 4,
+        "rank": 17
+      },
+      {
+        "player": "Brian Nevala",
+        "points": 6.75,
+        "events": 10,
+        "rank": 18
+      },
+      {
+        "player": "Scoot Wishart",
+        "points": 6.7,
+        "events": 7,
+        "rank": 19
+      }
+    ],
+    "2024": [],
+    "2023": [],
+    "2022": [],
+    "2021": []
+  },
+  "sidePots": {
+    "sandy": 268.0,
+    "eagle": 151.0,
+    "holeInOne": 268.0
+  },
+  "redRounds": [
+    {
+      "place": 1.0,
+      "player": "Alex Pletsch",
+      "course": "Eagle Valley",
+      "date": "Jun 3, 2021",
+      "score": "4 Thru 18",
+      "net": -10.3,
+      "handicap": 14.3
+    },
+    {
+      "place": 2.0,
+      "player": "Max",
+      "course": "Royal",
+      "date": "Sep 3, 2023",
+      "score": "5 Thru 18",
+      "net": -7.8,
+      "handicap": 12.8
+    },
+    {
+      "place": 3.0,
+      "player": "Nic",
+      "course": "Dwan",
+      "date": "Aug 30, 2025",
+      "score": "21 Thru 18",
+      "net": -7.4,
+      "handicap": 28.4
+    },
+    {
+      "place": 4,
+      "player": "Frank",
+      "course": "Wild Marsh",
+      "date": "Aug 6, 2023",
+      "score": "7 Thru 18",
+      "net": -7.3,
+      "handicap": 14.3
+    },
+    {
+      "place": 5.0,
+      "player": "Max",
+      "course": "Columbia",
+      "date": "Sep 13, 2025",
+      "score": "3 Thru 18",
+      "net": -6.3,
+      "handicap": 9.3
+    },
+    {
+      "place": 6,
+      "player": "Frank",
+      "course": "Columbia",
+      "date": "Jun 23, 2021",
+      "score": "5 Thru 12",
+      "net": -5.0,
+      "handicap": 15.0
+    },
+    {
+      "place": null,
+      "player": "Frank",
+      "course": "Gross",
+      "date": "Aug 31, 2025",
+      "score": "9 Thru 18",
+      "net": -5.0,
+      "handicap": 14.0
+    },
+    {
+      "place": 8.0,
+      "player": "Frank",
+      "course": "Edinburgh",
+      "date": "Apr 29, 2026",
+      "score": "5 Thru 14",
+      "net": -4.88,
+      "handicap": 12.7
+    },
+    {
+      "place": 9.0,
+      "player": "Nic",
+      "course": "Edinburgh",
+      "date": "Apr 29, 2026",
+      "score": "16 Thru 14",
+      "net": -4.61,
+      "handicap": 26.5
+    },
+    {
+      "place": 10,
+      "player": "Frank",
+      "course": "The Refuge",
+      "date": "Aug 5, 2022",
+      "score": "10 Thru 18",
+      "net": -4.2,
+      "handicap": 14.2
+    },
+    {
+      "place": 11,
+      "player": "Keegan",
+      "course": "Eagle Valley",
+      "date": "Jun 3, 2021",
+      "score": "12 Thru 16",
+      "net": -4.0,
+      "handicap": 18.0
+    },
+    {
+      "place": null,
+      "player": "John",
+      "course": "Les Bolstad",
+      "date": "Aug 24, 2023",
+      "score": "16 Thru 18",
+      "net": -4.0,
+      "handicap": 20.0
+    },
+    {
+      "place": 13,
+      "player": "Scott",
+      "course": "Oak Glen",
+      "date": "Sep 20, 2025",
+      "score": "2 Thru 18",
+      "net": -3.9,
+      "handicap": 5.9
+    },
+    {
+      "place": 14,
+      "player": "John",
+      "course": "Columbia",
+      "date": "Sep 5, 2023",
+      "score": "16 Thru 18",
+      "net": -3.7,
+      "handicap": 19.7
+    },
+    {
+      "place": 15,
+      "player": "Charlie",
+      "course": "Columbia",
+      "date": "Jun 23, 2021",
+      "score": "9 Thru 12",
+      "net": -3.07,
+      "handicap": 18.1
+    },
+    {
+      "place": 16,
+      "player": "Max",
+      "course": "New Richmond",
+      "date": "Aug 13, 2022",
+      "score": "3 Thru 9",
+      "net": -3.05,
+      "handicap": 12.1
+    },
+    {
+      "place": 17,
+      "player": "Max",
+      "course": "Edinburgh",
+      "date": "Jul 31, 2023",
+      "score": "8 Thru 16",
+      "net": -2.93,
+      "handicap": 12.3
+    },
+    {
+      "place": 18,
+      "player": "Max",
+      "course": "Troy Burne",
+      "date": "Sep 27, 2024",
+      "score": "8 Thru 18",
+      "net": -2.9,
+      "handicap": 10.9
+    },
+    {
+      "place": 19,
+      "player": "Alex Pletsch",
+      "course": "Oak Glen",
+      "date": "Sep 8, 2023",
+      "score": "8 Thru 18",
+      "net": -2.6,
+      "handicap": 10.6
+    },
+    {
+      "place": null,
+      "player": "John",
+      "course": "Columbia",
+      "date": "Jun 15, 2024",
+      "score": "15 Thru 18",
+      "net": -2.6,
+      "handicap": 17.6
+    },
+    {
+      "place": 21.0,
+      "player": "Max",
+      "course": "Gravel Pit",
+      "date": "Oct 7, 2022",
+      "score": "6 Thru 13",
+      "net": -2.59,
+      "handicap": 11.9
+    },
+    {
+      "place": 22,
+      "player": "Alex Pletsch",
+      "course": "Prestwick",
+      "date": "May 11, 2023",
+      "score": "10 Thru 18",
+      "net": -2.5,
+      "handicap": 12.5
+    },
+    {
+      "place": null,
+      "player": "TJ Woldum",
+      "course": "Heritage Links",
+      "date": "Jul 1, 2021",
+      "score": "14 Thru 18",
+      "net": -2.5,
+      "handicap": 16.5
+    },
+    {
+      "place": 24.0,
+      "player": "Max",
+      "course": "Gross",
+      "date": "Aug 31, 2025",
+      "score": "8 Thru 18",
+      "net": -2.4,
+      "handicap": 10.4
+    },
+    {
+      "place": 25,
+      "player": "Alex Rogers",
+      "course": "Nemadji (West)",
+      "date": "Jul 27, 2022",
+      "score": "7 Thru 9",
+      "net": -2.3,
+      "handicap": 18.6
+    },
+    {
+      "place": 26,
+      "player": "Frank",
+      "course": "Eagle Valley",
+      "date": "Aug 12, 2021",
+      "score": "9 Thru 14",
+      "net": -2.04,
+      "handicap": 14.2
+    },
+    {
+      "place": 27,
+      "player": "Frank",
+      "course": "Nemadji",
+      "date": "Jun 17, 2021",
+      "score": "10 Thru 15",
+      "net": -1.92,
+      "handicap": 14.3
+    },
+    {
+      "place": 28,
+      "player": "John",
+      "course": "Wild Marsh",
+      "date": "May 16, 2021",
+      "score": "15 Thru 18",
+      "net": -1.6,
+      "handicap": 16.6
+    },
+    {
+      "place": 29,
+      "player": "Max",
+      "course": "Les Bolstad",
+      "date": "May 5, 2022",
+      "score": "10 Thru 18",
+      "net": -1.4,
+      "handicap": 11.4
+    },
+    {
+      "place": null,
+      "player": "Keegan",
+      "course": "Cragun's Dutch 18",
+      "date": "Sep 23, 2023",
+      "score": "20 Thru 18",
+      "net": -1.4,
+      "handicap": 21.4
+    },
+    {
+      "place": 31,
+      "player": "Ben",
+      "course": "Eagle Valley",
+      "date": "Jul 21, 2023",
+      "score": "11 Thru 18",
+      "net": -1.3,
+      "handicap": 12.3
+    },
+    {
+      "place": null,
+      "player": "Charlie",
+      "course": "Wild Marsh",
+      "date": "May 16, 2021",
+      "score": "19 Thru 18",
+      "net": -1.3,
+      "handicap": 20.3
+    },
+    {
+      "place": 33,
+      "player": "John",
+      "course": "Shamrock",
+      "date": "May 6, 2021",
+      "score": "16 Thru 18",
+      "net": -1.1,
+      "handicap": 17.1
+    },
+    {
+      "place": 34,
+      "player": "Frank",
+      "course": "Les Bolstad",
+      "date": "Jul 6, 2022",
+      "score": "13 Thru 18",
+      "net": -1.0,
+      "handicap": 14.0
+    },
+    {
+      "place": null,
+      "player": "Charlie",
+      "course": "Les Bolstad",
+      "date": "Apr 7, 2021",
+      "score": "8 Thru 9",
+      "net": -1.0,
+      "handicap": 18.0
+    },
+    {
+      "place": null,
+      "player": "Scott",
+      "course": "Preserve at Grandview",
+      "date": "Sep 22, 2023",
+      "score": "5 Thru 18",
+      "net": -1.0,
+      "handicap": 6.0
+    },
+    {
+      "place": null,
+      "player": "Chris",
+      "course": "Nemadji",
+      "date": "Sep 25, 2024",
+      "score": "8 Thru 9",
+      "net": -1.0,
+      "handicap": 18.0
+    },
+    {
+      "place": 38,
+      "player": "Frank",
+      "course": "Nemadji",
+      "date": "Aug 16, 2023",
+      "score": "8 Thru 13",
+      "net": -0.81,
+      "handicap": 12.2
+    },
+    {
+      "place": 39,
+      "player": "Brian Nevala",
+      "course": "Gravel Pit",
+      "date": "Sep 22, 2023",
+      "score": "12 Thru 13",
+      "net": -0.78,
+      "handicap": 17.7
+    },
+    {
+      "place": 40,
+      "player": "John",
+      "course": "Chomonix",
+      "date": "Jun 20, 2023",
+      "score": "18 Thru 18",
+      "net": -0.7,
+      "handicap": 18.7
+    },
+    {
+      "place": 41,
+      "player": "Max",
+      "course": "Les Bolstad",
+      "date": "Apr 7, 2021",
+      "score": "6 Thru 15",
+      "net": -0.67,
+      "handicap": 8.0
+    },
+    {
+      "place": 42,
+      "player": "Alex Pletsch",
+      "course": "Royal",
+      "date": "Jun 18, 2021",
+      "score": "8 Thru 13",
+      "net": -0.67,
+      "handicap": 12.0
+    },
+    {
+      "place": 43,
+      "player": "Frank",
+      "course": "Columbia",
+      "date": "May 4, 2022",
+      "score": "8 Thru 12",
+      "net": -0.67,
+      "handicap": 13.0
+    },
+    {
+      "place": 44,
+      "player": "Alex Rogers",
+      "course": "Lakeview National",
+      "date": "Aug 29, 2022",
+      "score": "9 Thru 9",
+      "net": -0.45,
+      "handicap": 18.9
+    },
+    {
+      "place": 45,
+      "player": "Frank",
+      "course": "Eagle Valley",
+      "date": "Aug 11, 2022",
+      "score": "10 Thru 14",
+      "net": -0.42,
+      "handicap": 13.4
+    },
+    {
+      "place": 46,
+      "player": "Frank",
+      "course": "Goodrich",
+      "date": "Jul 6, 2021",
+      "score": "14 Thru 18",
+      "net": -0.4,
+      "handicap": 14.4
+    },
+    {
+      "place": 47,
+      "player": "Frank",
+      "course": "Loggers Trail",
+      "date": "Jun 9, 2023",
+      "score": "13 Thru 16",
+      "net": -0.33,
+      "handicap": 15.0
+    },
+    {
+      "place": 48,
+      "player": "Alex Rogers",
+      "course": "Proctor",
+      "date": "Aug 3, 2022",
+      "score": "9 Thru 9",
+      "net": -0.3,
+      "handicap": 18.6
+    },
+    {
+      "place": 49,
+      "player": "Keegan",
+      "course": "Columbia",
+      "date": "Apr 27, 2022",
+      "score": "13 Thru 12",
+      "net": -0.27,
+      "handicap": 19.9
+    },
+    {
+      "place": 50,
+      "player": "Ben",
+      "course": "Royal",
+      "date": "May 1, 2021",
+      "score": "16 Thru 18",
+      "net": -0.2,
+      "handicap": 16.2
+    },
+    {
+      "place": 51,
+      "player": "Max",
+      "course": "Loggers Trail",
+      "date": "Jul 17, 2022",
+      "score": "6 Thru 9",
+      "net": -0.1,
+      "handicap": 12.2
+    },
+    {
+      "place": null,
+      "player": "Charlie",
+      "course": "Columbia",
+      "date": "Aug 19, 2021",
+      "score": "10 Thru 9",
+      "net": -0.1,
+      "handicap": 20.2
+    }
+  ],
+  "events": [
+    {
+      "name": "Event 1.0",
+      "course": "Kelly Plantation",
+      "date": "Apr 2, 2026",
+      "time": "7:09 AM",
+      "completed": true
+    },
+    {
+      "name": "Event 2.0",
+      "course": "Edinburgh",
+      "date": "4/29/26",
+      "time": "4:27 & 4:36",
+      "completed": true
+    },
+    {
+      "name": "Event 3.0",
+      "course": "Links at Northfork",
+      "date": "5/16/26",
+      "time": "6:58 AM",
+      "completed": true
+    },
+    {
+      "name": "Event 4",
+      "course": "TBD",
+      "date": "Total cost",
+      "time": "Total DGL Points",
+      "completed": false
+    },
+    {
+      "name": "Event 5",
+      "course": "18:51:00",
+      "date": "Sunset",
+      "time": "Rank",
+      "completed": false
+    }
+  ],
+  "players": [
+    {
+      "name": "Alex Pletsch",
+      "nickname": "",
+      "bio": ""
+    },
+    {
+      "name": "Brian Nevala",
+      "nickname": "",
+      "bio": ""
+    },
+    {
+      "name": "Ben Magnuson",
+      "nickname": "",
+      "bio": ""
+    },
+    {
+      "name": "Scoot Wishart",
+      "nickname": "",
+      "bio": ""
+    },
+    {
+      "name": "Alex Rogers",
+      "nickname": "",
+      "bio": ""
+    },
+    {
+      "name": "Keegan Anderson",
+      "nickname": "",
+      "bio": ""
+    },
+    {
+      "name": "Anthony Gross",
+      "nickname": "",
+      "bio": ""
+    },
+    {
+      "name": "Steven Mitchell",
+      "nickname": "",
+      "bio": ""
+    },
+    {
+      "name": "Joe Grannes",
+      "nickname": "",
+      "bio": ""
+    },
+    {
+      "name": "Klappy",
+      "nickname": "",
+      "bio": ""
+    },
+    {
+      "name": "Chris D",
+      "nickname": "",
+      "bio": ""
+    },
+    {
+      "name": "Charles Kordonowy",
+      "nickname": "",
+      "bio": ""
+    },
+    {
+      "name": "Kyle Odegaard",
+      "nickname": "",
+      "bio": ""
+    },
+    {
+      "name": "Frank Rush",
+      "nickname": "",
+      "bio": ""
+    },
+    {
+      "name": "Max Olson",
+      "nickname": "",
+      "bio": ""
+    },
+    {
+      "name": "John Leitch",
+      "nickname": "",
+      "bio": ""
+    },
+    {
+      "name": "Nic Wendel",
+      "nickname": "",
+      "bio": ""
+    },
+    {
+      "name": "Tim P.",
+      "nickname": "",
+      "bio": ""
+    },
+    {
+      "name": "Sam T.",
+      "nickname": "",
+      "bio": ""
+    },
+    {
+      "name": "Tom H.",
+      "nickname": "",
+      "bio": ""
+    },
+    {
+      "name": "Michael",
+      "nickname": "",
+      "bio": ""
+    }
+  ],
+  "odds": [
+    {
+      "player": "Alex Pletsch",
+      "championshipOdds": "+225",
+      "eventOdds": "+400"
+    },
+    {
+      "player": "Brian Nevala",
+      "championshipOdds": "+300",
+      "eventOdds": "+500"
+    },
+    {
+      "player": "Ben Magnuson",
+      "championshipOdds": "+375",
+      "eventOdds": "+600"
+    },
+    {
+      "player": "Scoot Wishart",
+      "championshipOdds": "+450",
+      "eventOdds": "+700"
+    },
+    {
+      "player": "Alex Rogers",
+      "championshipOdds": "+525",
+      "eventOdds": "+800"
+    },
+    {
+      "player": "Keegan Anderson",
+      "championshipOdds": "+600",
+      "eventOdds": "+900"
+    },
+    {
+      "player": "Anthony Gross",
+      "championshipOdds": "+675",
+      "eventOdds": "+1000"
+    },
+    {
+      "player": "Steven Mitchell",
+      "championshipOdds": "+750",
+      "eventOdds": "+1100"
+    }
+  ],
+  "stateTrophies": [
+    {
+      "state": "Florida",
+      "holder": "Rush/Anderson",
+      "course": "Regatta Bay",
+      "year": 2021
+    },
+    {
+      "state": "Florida",
+      "holder": "Kordonowy",
+      "course": "Oak Marsh & TPC Sawgrass (Dye's Valley Course)",
+      "year": 2023
+    },
+    {
+      "state": "Arizona",
+      "holder": "Rush",
+      "course": "Troon North Pinnacle",
+      "year": 2023
+    },
+    {
+      "state": "Kentucky",
+      "holder": "Winner",
+      "course": "Course(s)",
+      "year": 2023
+    }
+  ]
+}
