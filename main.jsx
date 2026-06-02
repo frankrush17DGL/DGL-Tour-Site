@@ -13,7 +13,7 @@ function App() {
     <main className="page">
       <section className="hero">
         <img
-  src="/dgl-logo.jpeg"
+  src="./dgl-logo.jpeg"
   alt="DGL Tour Logo"
   style={{
     width: "140px",
