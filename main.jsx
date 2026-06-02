@@ -284,7 +284,7 @@ function App() {
             <em>{nextEvent.date || 'Coming soon'}</em>
           </div>
           <div className="hero-stat">
-            <span>Featured Entry</span>
+            <span>Featured Red Round</span>
             <strong>{featuredRedRound.player || 'Red Room'}</strong>
             <em>{featuredRedRound.net ? 'Net ' + featuredRedRound.net : 'VIP only'}</em>
           </div>
