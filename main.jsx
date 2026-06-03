@@ -312,13 +312,13 @@ function App() {
       Entry reserved for DGL's finest rounds. Not everyone gets in.
     </p>
 
-    <div className="hostess-wrap">
-      <img
-        src="/dgl-logo.jpeg"
-        alt="Red Room Hostess"
-        className="hostess"
-      />
-    </div>
+   <div className="hostess-wrap">
+  <img
+    src="/44B7C86E-3315-4324-A8D9-B70002267AB4.png"
+    alt="Red Room Hostess"
+    className="hostess"
+  />
+</div>
 
     {/* VIP GRID STARTS HERE */}
             <div className="vip-grid">
