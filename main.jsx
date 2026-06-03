@@ -144,15 +144,6 @@ for (let col = 4; col <= 20; col++) {
     time
   });
 }
-    const eventNo = sheet[1]?.[col];
-    const date = sheet[2]?.[col];
-    const course = sheet[3]?.[col];
-    const tees = sheet[4]?.[col];
-    const time = sheet[5]?.[col];
-    if (course || date) {
-      events.push({ event: eventNo || events.length + 1, date: date || '', course: course || 'Course TBD', tees: tees || '', time: time || '' });
-    }
-  }
 
   const redRounds = [];
   for (let i = 1; i < redSheet.length; i++) {
