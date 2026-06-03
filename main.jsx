@@ -4,6 +4,7 @@ import './styles.css';
 
 const SHEET_ID = '1ih9-i3Bfd_N-gD1vBY88bu5c0lGaXT-c80ppXrU95Tw';
 const CURRENT_YEAR_SHEET = '2026 Standings';
+const HOSTESS_SRC = '/44B7C86E-3315-4324-A8D9-B70002267AB4.png';
 
 const fallbackData = {
   lastUpdated: 'Backup data',
@@ -16,14 +17,14 @@ const fallbackData = {
   ],
   sidePots: { sandy: 268, eagle: 151, holeInOne: 268 },
   events: [
-    { event: 1, course: 'Kelly Plantation', date: '4/2/26', time: '7:09 AM', tees: 'Plantation' },
-    { event: 2, course: 'Edinburgh', date: '4/29/26', time: '4:27 & 4:36', tees: '' },
-    { event: 3, course: 'Links at Northfork', date: '5/16/26', time: '6:58 AM', tees: 'Black' }
+    { event: 1, course: 'Kelly Plantation', date: '4/2/26', time: '7:09 AM', tees: 'Plantation', status: 'Past' },
+    { event: 2, course: 'Edinburgh', date: '4/29/26', time: '4:27 & 4:36', tees: '', status: 'Past' },
+    { event: 3, course: 'Links at Northfork', date: '5/16/26', time: '6:58 AM', tees: 'Black', status: 'Past' }
   ],
   redRounds: [
     { place: 1, player: 'Alex Pletsch', course: 'Eagle Valley', date: '6/3/21', score: '4 Thru 18', net: -10.3 },
-    { place: 2, player: 'Max', course: 'Royal', date: '', score: '5 Thru 18', net: -7.8 },
-    { place: 3, player: 'Nic', course: 'Dwan', date: '', score: '21 Thru 18', net: -7.4 }
+    { place: 2, player: 'Max', course: 'Royal', date: '9/3/23', score: '5 Thru 18', net: -7.8 },
+    { place: 3, player: 'Nic', course: 'Dwan', date: '8/30/25', score: '21 Thru 18', net: -7.4 }
   ]
 };
 
@@ -36,9 +37,11 @@ function parseCSV(text) {
   let row = [];
   let value = '';
   let insideQuotes = false;
+
   for (let i = 0; i < text.length; i++) {
     const char = text[i];
     const next = text[i + 1];
+
     if (char === '"' && insideQuotes && next === '"') {
       value += '"';
       i++;
@@ -59,10 +62,12 @@ function parseCSV(text) {
       value += char;
     }
   }
+
   if (value !== '' || row.length) {
     row.push(value);
     rows.push(row);
   }
+
   return rows;
 }
 
@@ -73,8 +78,61 @@ function numberFromCell(value) {
 }
 
 function cleanName(value) {
-  const name = String(value || '').replace(/\s{2,}.+$/g, '').replace(/\s+202\d.*$/g, '').trim();
-  return name === 'Tim P.' ? 'Tim Perlick' : name;
+  const name = String(value || '')
+    .replace(/\s{2,}.+$/g, '')
+    .replace(/\s+202\d.*$/g, '')
+    .trim();
+
+  const aliases = {
+    'Tim P.': 'Tim Perlick',
+    'Tim P': 'Tim Perlick',
+    'MAX': 'Max Olson',
+    'Max': 'Max Olson',
+    'Frank': 'Frank Rush',
+    'Nic': 'Nic Wendel',
+    'Chris D': 'Chris Dingmann',
+    'Klappy': 'Grant Kleven'
+  };
+
+  return aliases[name] || name;
+}
+
+function findPot(sheet, label) {
+  const target = label.toLowerCase();
+
+  const row = sheet.find(r =>
+    r.some(cell => String(cell || '').toLowerCase().trim() === target)
+  );
+
+  if (!row) return 0;
+
+  const values = row
+    .map(cell => numberFromCell(cell))
+    .filter(value => value > 0);
+
+  return values.length ? values[values.length - 1] : 0;
+}
+
+function parseLooseDate(value) {
+  if (!value) return null;
+  const raw = String(value).trim();
+  const parsed = new Date(raw);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function decorateEvents(events) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  return events.map(event => {
+    const parsed = parseLooseDate(event.date);
+    const isPast = parsed ? parsed < today : false;
+    return {
+      ...event,
+      status: isPast ? 'Past' : 'Upcoming',
+      timestamp: parsed ? parsed.getTime() : Number.MAX_SAFE_INTEGER
+    };
+  });
 }
 
 async function loadLiveData() {
@@ -96,68 +154,73 @@ async function loadLiveData() {
   for (let rowIndex = 6; rowIndex < 66; rowIndex += 3) {
     const name = cleanName(sheet[rowIndex]?.[0]);
     if (!name) continue;
-    const points = numberFromCell(sheet[rowIndex + 2]?.[26]); // AA
-    const rank = numberFromCell(sheet[rowIndex + 2]?.[27]);   // AB
+
+    const points = numberFromCell(sheet[rowIndex + 2]?.[26]);
+    const rank = numberFromCell(sheet[rowIndex + 2]?.[27]);
+
     if (!rank && !points) continue;
-    standings.push({ rank: rank || 999, name, points: Math.round(points * 100) / 100 });
+
+    standings.push({
+      rank: rank || 999,
+      name,
+      points: Math.round(points * 100) / 100
+    });
   }
+
   standings.sort((a, b) => a.rank - b.rank || b.points - a.points || a.name.localeCompare(b.name));
 
-  function findPot(label) {
-  const target = label.toLowerCase();
-
-  const row = sheet.find(r =>
-    r.some(cell => String(cell || '').toLowerCase().trim() === target)
-  );
-
-  if (!row) return 0;
-
-  const values = row
-    .map(cell => numberFromCell(cell))
-    .filter(value => value > 0);
-
-  return values.length ? values[values.length - 1] : 0;
-}
-
-const sidePots = {
-  sandy: findPot('Sandy'),
-  eagle: findPot('Eagle'),
-  holeInOne: findPot('Hole in One')
-};
+  const sidePots = {
+    sandy: findPot(sheet, 'Sandy'),
+    eagle: findPot(sheet, 'Eagle'),
+    holeInOne: findPot(sheet, 'Hole in One')
+  };
 
   const events = [];
+  for (let col = 4; col <= 20; col++) {
+    const eventNo = sheet[1]?.[col];
+    const date = sheet[2]?.[col];
+    const course = sheet[3]?.[col];
+    const tees = sheet[4]?.[col];
+    const time = sheet[5]?.[col];
 
-for (let col = 4; col <= 20; col++) {
-  const eventNo = sheet[1]?.[col];
-  const date = sheet[2]?.[col];
-  const course = sheet[3]?.[col];
-  const tees = sheet[4]?.[col];
-  const time = sheet[5]?.[col];
+    if (!course && !date) continue;
 
-  if (!course) continue;
-
-  events.push({
-    event: eventNo,
-    date,
-    course,
-    tees,
-    time
-  });
-}
+    events.push({
+      event: eventNo || events.length + 1,
+      date: date || '',
+      course: course || 'Course TBD',
+      tees: tees || '',
+      time: time || ''
+    });
+  }
 
   const redRounds = [];
   for (let i = 1; i < redSheet.length; i++) {
     const row = redSheet[i];
     if (!row?.[1]) continue;
-    redRounds.push({ place: row[0] || i, player: row[1], course: row[2] || '', date: row[3] || '', tees: row[4] || '', score: row[5] || '', net: row[6] || '' });
+
+    redRounds.push({
+      place: row[0] || i,
+      player: cleanName(row[1]),
+      course: row[2] || '',
+      date: row[3] || '',
+      tees: row[4] || '',
+      score: row[5] || '',
+      net: row[6] || ''
+    });
   }
 
   return {
-    lastUpdated: new Date().toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }),
+    lastUpdated: new Date().toLocaleString([], {
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit'
+    }),
     standings,
     sidePots,
-    events,
-    redRounds: redRounds.slice(0, 12)
+    events: decorateEvents(events),
+    redRounds: redRounds.slice(0, 14)
   };
 }
 
@@ -170,6 +233,19 @@ function medal(rank) {
   if (rank === 2) return '🥈';
   if (rank === 3) return '🥉';
   return '#' + rank;
+}
+
+function EventCard({ event }) {
+  return (
+    <div className={'event ' + (event.status === 'Past' ? 'event-past' : 'event-upcoming')}>
+      <span>{event.status === 'Past' ? 'Past Result' : 'Upcoming'} • Event {event.event}</span>
+      <strong>{event.course}</strong>
+      <small>
+        {event.date}{event.time ? ' • ' + event.time : ''}{event.tees ? ' • ' + event.tees : ''}
+      </small>
+      {event.status === 'Past' && <em>Winner field coming soon</em>}
+    </div>
+  );
 }
 
 function App() {
@@ -190,8 +266,10 @@ function App() {
 
   const top10 = useMemo(() => data.standings.slice(0, 10), [data]);
   const leader = data.standings[0] || {};
-  const nextEvent = data.events[data.events.length - 1] || {};
   const featuredRedRound = data.redRounds[0] || {};
+  const upcomingEvents = data.events.filter(event => event.status !== 'Past').slice(0, 2);
+  const pastEvents = data.events.filter(event => event.status === 'Past').slice().reverse().slice(0, 6);
+  const featuredEvent = upcomingEvents[0] || data.events[data.events.length - 1] || {};
 
   return (
     <main className="page">
@@ -220,8 +298,8 @@ function App() {
           </div>
           <div className="hero-stat">
             <span>Next Event</span>
-            <strong>{nextEvent.course || 'Schedule TBD'}</strong>
-            <em>{nextEvent.date || 'Coming soon'}</em>
+            <strong>{featuredEvent.course || 'Schedule TBD'}</strong>
+            <em>{featuredEvent.date || 'Coming soon'}</em>
           </div>
           <div className="hero-stat">
             <span>Featured Red Round</span>
@@ -290,38 +368,44 @@ function App() {
         <article className="card events-card" id="events">
           <p className="eyebrow">Tour Calendar</p>
           <h2>Event Schedule</h2>
+
+          <h3>Upcoming</h3>
           <div className="event-list">
-            {data.events.slice(0, 5).map(event => (
-              <div className="event" key={event.event + event.course}>
-                <span>Event {event.event}</span>
-                <strong>{event.course}</strong>
-                <small>{event.date}{event.time ? ' • ' + event.time : ''}{event.tees ? ' • ' + event.tees : ''}</small>
-              </div>
-            ))}
+            {upcomingEvents.length ? upcomingEvents.map(event => (
+              <EventCard event={event} key={'upcoming-' + event.event + event.course} />
+            )) : <p className="note">No future events currently entered.</p>}
+          </div>
+
+          <h3>Recent Results</h3>
+          <div className="event-scroll">
+            {pastEvents.length ? pastEvents.map(event => (
+              <EventCard event={event} key={'past-' + event.event + event.course} />
+            )) : <p className="note">Past results coming soon.</p>}
           </div>
         </article>
 
         <article className="card red-room-card wide" id="red-room">
-  <div className="rope rope-top"></div>
+          <div className="rope rope-top"></div>
 
-  <div className="red-room-content">
-    <p className="eyebrow">Velvet Rope Access</p>
-    <h2>🔴 The Red Room</h2>
+          <div className="red-room-scene">
+            <div className="red-room-copy">
+              <p className="eyebrow">Velvet Rope Access</p>
+              <h2>🔴 The Red Room</h2>
+              <p className="red-copy">Entry reserved for DGL's finest rounds. Not everyone gets in.</p>
+            </div>
 
-    <p className="red-copy">
-      Entry reserved for DGL's finest rounds. Not everyone gets in.
-    </p>
+            <div className="hostess-wrap">
+              <img
+                src={HOSTESS_SRC}
+                alt="Red Room Hostess"
+                className="hostess"
+                onError={(event) => {
+                  event.currentTarget.style.display = 'none';
+                }}
+              />
+            </div>
 
-   <div className="hostess-wrap">
-  <img
-    src="/44B7C86E-3315-4324-A8D9-B70002267AB4.png"
-    alt="Red Room Hostess"
-    className="hostess"
-  />
-</div>
-
-    {/* VIP GRID STARTS HERE */}
-            <div className="vip-grid">
+            <div className="vip-stage">
               <div className="vip-feature">
                 <span>VIP TABLE #1</span>
                 <strong>{featuredRedRound.player}</strong>
@@ -329,8 +413,9 @@ function App() {
                 <p>{featuredRedRound.score} • Net {featuredRedRound.net}</p>
                 <small>{featuredRedRound.date}</small>
               </div>
+
               <div className="vip-list">
-                {data.redRounds.slice(1, 6).map((round, index) => (
+                {data.redRounds.slice(1, 7).map((round, index) => (
                   <div className="vip-row" key={round.player + round.course + round.date}>
                     <span>#{index + 2}</span>
                     <div>
@@ -342,6 +427,7 @@ function App() {
               </div>
             </div>
           </div>
+
           <div className="rope rope-bottom"></div>
         </article>
 
