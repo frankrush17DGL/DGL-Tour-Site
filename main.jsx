@@ -316,6 +316,13 @@ function App() {
             <p className="eyebrow">Velvet Rope Access</p>
             <h2>🔴 The Red Room</h2>
             <p className="red-copy">Entry reserved for DGL's finest rounds. Not everyone gets in.</p>
+           <div className="hostess-wrap">
+  <img
+    src="/red-room-hostess.png"
+    alt="Red Room Hostess"
+    className="hostess"
+  />
+</div>
             <div className="vip-grid">
               <div className="vip-feature">
                 <span>VIP TABLE #1</span>
