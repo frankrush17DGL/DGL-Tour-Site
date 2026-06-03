@@ -126,16 +126,24 @@ const sidePots = {
 };
 
   const events = [];
-  for (let col = 4; col <= 20; col++) {
-    console.log(
-  "EVENT",
-  col,
-  sheet[1]?.[col],
-  sheet[2]?.[col],
-  sheet[3]?.[col],
-  sheet[4]?.[col],
-  sheet[5]?.[col]
-);
+
+for (let col = 4; col <= 20; col++) {
+  const eventNo = sheet[1]?.[col];
+  const date = sheet[2]?.[col];
+  const course = sheet[3]?.[col];
+  const tees = sheet[4]?.[col];
+  const time = sheet[5]?.[col];
+
+  if (!course) continue;
+
+  events.push({
+    event: eventNo,
+    date,
+    course,
+    tees,
+    time
+  });
+}
     const eventNo = sheet[1]?.[col];
     const date = sheet[2]?.[col];
     const course = sheet[3]?.[col];
