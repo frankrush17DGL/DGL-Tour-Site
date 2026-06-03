@@ -127,6 +127,15 @@ const sidePots = {
 
   const events = [];
   for (let col = 4; col <= 20; col++) {
+    console.log(
+  "EVENT",
+  col,
+  sheet[1]?.[col],
+  sheet[2]?.[col],
+  sheet[3]?.[col],
+  sheet[4]?.[col],
+  sheet[5]?.[col]
+);
     const eventNo = sheet[1]?.[col];
     const date = sheet[2]?.[col];
     const course = sheet[3]?.[col];
