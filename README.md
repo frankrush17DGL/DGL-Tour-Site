@@ -36,4 +36,4 @@ Scott Wishart won the 2025 Eagle Pot — $117.50.
 Replace `data/dgl-data.json` with a live Google Sheets fetch using the Google Visualization CSV endpoint or Google Sheets API.
 
 ## future development step 
-possibly require a password for users to log into the site
+possibly require a password for users to log into the site. could have functionality so that users can vote or commit to upcoming events. 
