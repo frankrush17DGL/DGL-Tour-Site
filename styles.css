@@ -550,3 +550,32 @@ h2 {
   .rope:before { left: 7%; }
   .rope:after { right: 7%; }
 }
+.hostess-wrap {
+  position: absolute;
+  right: 30px;
+  top: 70px;
+  z-index: 3;
+}
+
+.hostess {
+  width: 180px;
+  max-width: 25vw;
+  filter:
+    drop-shadow(0 20px 30px rgba(0,0,0,.45))
+    drop-shadow(0 0 20px rgba(212,166,42,.25));
+}
+
+@media (max-width: 760px) {
+  .hostess-wrap {
+    position: relative;
+    right: auto;
+    top: auto;
+    text-align: center;
+    margin: 10px 0 20px;
+  }
+
+  .hostess {
+    width: 120px;
+    max-width: none;
+  }
+}
