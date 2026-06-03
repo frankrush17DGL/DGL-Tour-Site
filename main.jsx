@@ -311,18 +311,25 @@ function App() {
         </article>
 
         <article className="card red-room-card wide" id="red-room">
-          <div className="rope rope-top"></div>
-          <div className="red-room-content">
-            <p className="eyebrow">Velvet Rope Access</p>
-            <h2>🔴 The Red Room</h2>
-            <p className="red-copy">Entry reserved for DGL's finest rounds. Not everyone gets in.</p>
-           <div className="hostess-wrap">
-  <img
-    src="/44B7C86E-3315-4324-A8D9-B70002267AB4.png"
-    alt="Red Room Hostess"
-    className="hostess"
-  />
-</div>
+  <div className="rope rope-top"></div>
+
+  <div className="red-room-content">
+    <p className="eyebrow">Velvet Rope Access</p>
+    <h2>🔴 The Red Room</h2>
+
+    <p className="red-copy">
+      Entry reserved for DGL's finest rounds. Not everyone gets in.
+    </p>
+
+    <div className="hostess-wrap">
+      <img
+        src="/44B7C86E-3315-4324-A8D9-B70002267AB4.png"
+        alt="Red Room Hostess"
+        className="hostess"
+      />
+    </div>
+
+    {/* VIP GRID STARTS HERE */}
             <div className="vip-grid">
               <div className="vip-feature">
                 <span>VIP TABLE #1</span>
