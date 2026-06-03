@@ -103,11 +103,27 @@ async function loadLiveData() {
   }
   standings.sort((a, b) => a.rank - b.rank || b.points - a.points || a.name.localeCompare(b.name));
 
-  const sidePots = {
-    sandy: numberFromCell(sheet[71]?.[7]),      // H72
-    eagle: numberFromCell(sheet[72]?.[7]),      // H73
-    holeInOne: numberFromCell(sheet[73]?.[7])   // H74
-  };
+  function findPot(label) {
+  const target = label.toLowerCase();
+
+  const row = sheet.find(r =>
+    r.some(cell => String(cell || '').toLowerCase().trim() === target)
+  );
+
+  if (!row) return 0;
+
+  const values = row
+    .map(cell => numberFromCell(cell))
+    .filter(value => value > 0);
+
+  return values.length ? values[values.length - 1] : 0;
+}
+
+const sidePots = {
+  sandy: findPot('Sandy'),
+  eagle: findPot('Eagle'),
+  holeInOne: findPot('Hole in One')
+};
 
   const events = [];
   for (let col = 4; col <= 20; col++) {
