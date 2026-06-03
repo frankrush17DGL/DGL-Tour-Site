@@ -431,20 +431,8 @@ h2 {
 .rope-top { top: 20px; }
 .rope-bottom { bottom: 20px; }
 
-.red-room-content:before {
-  content: "";
-  float: right;
-  width: min(31vw, 185px);
-  height: 255px;
-  margin: -4px 0 12px 18px;
-  border-radius: 90px 90px 22px 22px;
-  background:
-    radial-gradient(circle at 50% 18%, #f2c7a8 0 17px, transparent 18px),
-    radial-gradient(circle at 50% 20%, #18100d 0 31px, transparent 32px),
-    linear-gradient(180deg, transparent 0 62px, #b00016 63px 180px, #4b0008 181px);
-  filter: drop-shadow(0 22px 26px rgba(0,0,0,0.42));
-  opacity: 0.92;
-}
+
+
 
 .vip-grid {
   clear: both;
