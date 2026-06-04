@@ -18,3 +18,4 @@ Notes:
 - Uses fallback data if Google is temporarily unavailable.
 - Adds professional Red Room layout with hostess foreground.
 - Improves event schedule with upcoming + recent results sections.
+
