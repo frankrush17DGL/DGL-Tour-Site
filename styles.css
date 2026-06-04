@@ -517,7 +517,7 @@ small {
       rgba(10,0,0,.82) 68%,
       rgba(10,0,0,.96) 100%
     ),
-    url('/red-room-bg.png?v=2')
+    url('/red-room-bg.png?v=2');
 
   background-size: cover;
   background-position: center top;
