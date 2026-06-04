@@ -496,13 +496,45 @@ small {
 .red-room-page {
   position: relative;
   min-height: 100vh;
-  max-width: 1500px;
+  max-width: 1400px;
   margin: 0 auto;
   overflow: hidden;
   border-radius: 30px;
-  border: 1px solid rgba(255, 211, 90, 0.45);
-  background: #100003;
-  box-shadow: 0 28px 92px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255,211,90,0.45);
+  background-image:
+    linear-gradient(
+      180deg,
+      rgba(0,0,0,.10) 0%,
+      rgba(0,0,0,.25) 34%,
+      rgba(10,0,0,.72) 62%,
+      rgba(10,0,0,.96) 100%
+    ),
+    url('/red-room-lounge-v4.png');
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  box-shadow: 0 28px 92px rgba(0,0,0,0.45);
+}.red-room-page {
+  position: relative;
+  min-height: 100vh;
+  max-width: 1400px;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 30px;
+  border: 1px solid rgba(255,211,90,0.45);
+  background-image:
+    linear-gradient(
+      180deg,
+      rgba(0,0,0,.10) 0%,
+      rgba(0,0,0,.25) 34%,
+      rgba(10,0,0,.72) 62%,
+      rgba(10,0,0,.96) 100%
+    ),
+    url('/red-room-lounge-v4.png');
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  box-shadow: 0 28px 92px rgba(0,0,0,0.45);
 }
 .red-page-bg {
   position: absolute;
