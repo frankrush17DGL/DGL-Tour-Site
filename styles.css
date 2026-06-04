@@ -504,29 +504,36 @@ small {
   background: #100003;
   box-shadow: 0 28px 92px rgba(0, 0, 0, 0.45);
 }
-
 .red-page-bg {
   position: absolute;
   inset: 0;
   z-index: 0;
+
   background-image:
-    linear-gradient(90deg, rgba(2, 0, 0, 0.86), rgba(35, 0, 5, 0.35) 48%, rgba(2, 0, 0, 0.80)),
-    radial-gradient(circle at 58% 18%, rgba(255, 210, 120, 0.20), transparent 26%),
-    url("/red-room-bg.png");
+    linear-gradient(
+      180deg,
+      rgba(0,0,0,.18) 0%,
+      rgba(0,0,0,.40) 34%,
+      rgba(10,0,0,.82) 68%,
+      rgba(10,0,0,.96) 100%
+    ),
+    url('/red-room-bg.png');
+
   background-size: cover;
-  background-position: center center;
+  background-position: center top;
   background-repeat: no-repeat;
-  transform: scale(1.01);
 }
+.red
 
 .red-page-vignette {
   position: absolute;
   inset: 0;
   z-index: 1;
-  pointer-events: none;
   background:
-    radial-gradient(circle at 56% 18%, transparent 0 22%, rgba(0, 0, 0, 0.30) 55%, rgba(0, 0, 0, 0.82) 100%),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.55));
+    radial-gradient(circle at 52% 12%, rgba(255,211,90,0.16), transparent 26%),
+    radial-gradient(circle at 80% 18%, rgba(120,0,12,0.28), transparent 30%),
+    linear-gradient(90deg, rgba(0,0,0,.72), transparent 35%, rgba(0,0,0,.64));
+  pointer-events: none;
 }
 
 .back-button {
@@ -579,10 +586,12 @@ small {
 .red-page-hostess {
   position: absolute;
   right: 2%;
-  bottom: -44px;
+  bottom: -36px;
   z-index: 6;
-  width: min(370px, 34vw);
-  filter: drop-shadow(0 42px 54px rgba(0, 0, 0, 0.86)) drop-shadow(0 0 34px rgba(212, 166, 42, 0.32));
+  width: min(420px, 36vw);
+  filter:
+    drop-shadow(0 42px 54px rgba(0,0,0,.86))
+    drop-shadow(0 0 34px rgba(212,166,42,.32));
 }
 
 .red-page-layout {
