@@ -167,7 +167,40 @@ async function loadLiveData() {
     if (!row?.[1]) continue;
     redRounds.push({ place: row[0] || i, player: cleanName(row[1]), course: row[2] || '', date: row[3] || '', tees: row[4] || '', score: row[5] || '', net: row[6] || '' });
   }
+const historyMoments = [];
 
+historyTexts.forEach((text, sheetIndex) => {
+  if (!text) return;
+
+  const year = HISTORY_SHEETS[sheetIndex].replace(' Standings', '');
+  const historySheet = parseCSV(text);
+
+  for (let col = 4; col <= 20; col++) {
+    const eventNo = historySheet[1]?.[col];
+    const date = historySheet[2]?.[col];
+    const course = historySheet[3]?.[col];
+    const tees = historySheet[4]?.[col];
+    const time = historySheet[5]?.[col];
+
+    if (!date || !course) continue;
+
+    const parsed = parseLooseDate(date);
+    if (!parsed) continue;
+
+    const monthDay = parsed.toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric'
+    });
+
+    historyMoments.push({
+      date: monthDay,
+      year,
+      type: '🏌️ Tour Stop',
+      title: `DGL played ${course}`,
+      body: `Event ${eventNo || ''}${tees ? ` • ${tees} tees` : ''}${time ? ` • ${time}` : ''}`.trim()
+    });
+  }
+});
   return {
     lastUpdated: new Date().toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }),
     standings, sidePots, events: decorateEvents(events), redRounds: redRounds.slice(0, 50)
