@@ -4,6 +4,14 @@ import './styles.css';
 
 const SHEET_ID = '1ih9-i3Bfd_N-gD1vBY88bu5c0lGaXT-c80ppXrU95Tw';
 const CURRENT_YEAR_SHEET = '2026 Standings';
+
+const HISTORY_SHEETS = [
+  '2021 Standings',
+  '2022 Standings',
+  '2023 Standings',
+  '2024 Standings',
+  '2025 Standings'
+];
 const HOSTESS_SRC = '/44B7C86E-3315-4324-A8D9-B70002267AB4.png';
 
 const fallbackData = {
