@@ -261,7 +261,15 @@ function HomePage({ data, syncStatus, goRedRoom }) {
         </div>
       </section>
 
-      <section className="ticker"><strong>{syncStatus}</strong><span>•</span><span>Last updated: {data.lastUpdated}</span><span>•</span><span>Scott Wishart claimed the 2025 Eagle Pot at Dutch 27 (Red 9), Hole #5, 520-yard Par 5. Paid $117.50.</span></section>
+ <section className="ticker">
+  <div className="ticker-track">
+    <span><strong>{syncStatus}</strong></span>
+    <span>Last updated: {data.lastUpdated}</span>
+    <span>Scott Wishart claimed the 2025 Eagle Pot at Dutch 27 — Hole #5, 520-yard Par 5. Paid $117.50.</span>
+    <span>Red Room is live.</span>
+    <span>Standings update automatically from Google Sheets.</span>
+  </div>
+</section>
 
       <section className="grid">
         <article className="card wide standings-card" id="standings">
