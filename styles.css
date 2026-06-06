@@ -204,24 +204,39 @@ h3 {
   color: var(--gold-bright);
 }
 
-/* TICKER */
 .ticker {
   max-width: 1180px;
   margin: 0 auto 14px;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  overflow-x: auto;
-  padding: 10px 14px;
-  border: 1px solid rgba(179, 0, 16, 0.45);
+  overflow: hidden;
+  border: 1px solid rgba(179,0,16,0.45);
   border-radius: 999px;
-  background: rgba(61, 0, 7, 0.55);
+  background: rgba(61,0,7,0.55);
   color: var(--muted);
   white-space: nowrap;
 }
 
+.ticker-track {
+  display: inline-flex;
+  gap: 26px;
+  padding: 10px 14px;
+  animation: ticker-scroll 34s linear infinite;
+}
+
+.ticker-track span {
+  display: inline-block;
+}
+
 .ticker strong {
   color: var(--gold);
+}
+
+@keyframes ticker-scroll {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(-100%);
+  }
 }
 
 /* GENERAL CARDS */
