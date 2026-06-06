@@ -304,13 +304,24 @@ function HomePage({ data, syncStatus, goRedRoom }) {
           <button onClick={goRedRoom} className="gold-button">ENTER THE RED ROOM</button>
         </article>
 
-        <article className="card events-card" id="events">
-          <p className="eyebrow">Tour Calendar</p><h2>Event Schedule</h2>
-          <h3>Upcoming</h3>
-          <div className="event-list">{upcomingEvents.length ? upcomingEvents.map(event => <EventCard event={event} key={'upcoming-' + event.event + event.course} />) : <p className="note">No future events currently entered.</p>}</div>
-          <h3>Recent Results</h3>
-          <div className="event-scroll">{pastEvents.length ? pastEvents.map(event => <EventCard event={event} key={'past-' + event.event + event.course} />) : <p className="note">Past results coming soon.</p>}</div>
-        </article>
+      <article className="card events-card" id="events">
+  <p className="eyebrow">Tour Calendar</p>
+  <h2>Event Schedule</h2>
+
+  <h3>Upcoming</h3>
+
+  <div className="event-list">
+    {upcomingEvents.length ? upcomingEvents.map(event => (
+      <EventCard event={event} key={'upcoming-' + event.event + event.course} />
+    )) : (
+      <p className="note">No future events currently entered.</p>
+    )}
+  </div>
+
+  <p className="note event-note">
+    Recent results will be added once winner and low-net fields are added to the Google Sheet.
+  </p>
+</article>
 
         <article className="card" id="sportsbook"><p className="eyebrow">For Entertainment Purposes</p><h2>Sportsbook</h2><p><strong>Championship favorite:</strong> {leader.name}</p><p className="note">Futures, matchups and DGL odds model coming next.</p></article>
         <article className="card"><p className="eyebrow">Coming Soon</p><h2>State Trophies</h2><p>Minnesota, Wisconsin and out-of-state trophy history will live here.</p></article>
