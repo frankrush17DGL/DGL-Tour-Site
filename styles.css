@@ -947,3 +947,45 @@ small {
     max-width: none;
   }
 }
+.history-card {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 85% 15%, rgba(255,211,90,0.20), transparent 28%),
+    linear-gradient(145deg, rgba(35,18,5,0.92), rgba(70,0,9,0.48));
+}
+
+.history-card:before {
+  content: "DGL";
+  position: absolute;
+  right: 18px;
+  top: 18px;
+  color: rgba(255,211,90,0.08);
+  font-size: 92px;
+  font-weight: 1000;
+  letter-spacing: -0.08em;
+  line-height: 1;
+}
+
+.history-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.history-year {
+  display: inline-block;
+  margin-bottom: 10px;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.history-card strong {
+  display: block;
+  color: var(--gold-bright);
+  margin-bottom: 8px;
+}
+
+.history-card h3 {
+  margin-top: 6px;
+  font-size: 22px;
+}
