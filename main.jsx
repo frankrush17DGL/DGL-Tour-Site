@@ -233,7 +233,52 @@ function EventCard({ event }) {
     </div>
   );
 }
+function ThisDayInDGLHistory() {
+  const moments = [
+    {
+      date: 'September 26',
+      year: '2025',
+      type: '💰 Big Money',
+      title: 'Scott Wishart claimed the Eagle Pot',
+      body: 'Dutch 27 (Red 9), Hole #5 — 520-yard Par 5. Paid $117.50.'
+    },
+    {
+      date: 'June 3',
+      year: '2021',
+      type: '🔴 Red Room Moment',
+      title: 'Alex Pletsch entered Red Room royalty',
+      body: 'A legendary net -10.3 at Eagle Valley still sits atop the all-time Red Room.'
+    },
+    {
+      date: 'April 2',
+      year: '2026',
+      type: '🏌️ Tour Stop',
+      title: 'DGL went south to Kelly Plantation',
+      body: 'The 2026 season opened in Destin, Florida.'
+    }
+  ];
 
+  const today = new Date();
+  const monthDay = today.toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric'
+  });
+
+  const matches = moments.filter(moment => moment.date === monthDay);
+  const moment = matches[0] || moments[today.getDate() % moments.length];
+
+  return (
+    <article className="card history-card">
+      <p className="eyebrow">📜 This Day in DGL History</p>
+      <h2>{moment.date}</h2>
+      <span className="history-year">{moment.year}</span>
+      <strong>{moment.type}</strong>
+      <h3>{moment.title}</h3>
+      <p>{moment.body}</p>
+      <button className="gold-button">ENTER THE ANNALS</button>
+    </article>
+  );
+}
 function HomePage({ data, syncStatus, goRedRoom }) {
   const top10 = data.standings.slice(0, 10);
   const leader = data.standings[0] || {};
