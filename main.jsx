@@ -203,7 +203,8 @@ historyTexts.forEach((text, sheetIndex) => {
 });
   return {
     lastUpdated: new Date().toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }),
-    standings, sidePots, events: decorateEvents(events), redRounds: redRounds.slice(0, 50)
+    standings, sidePots, events: decorateEvents(events), redRounds: redRounds.slice(0, 50),
+historyMoments
   };
 }
 
