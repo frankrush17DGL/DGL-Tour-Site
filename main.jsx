@@ -116,10 +116,19 @@ function decorateEvents(events) {
 }
 
 async function loadLiveData() {
-  const [standingsText, redRoundsText] = await Promise.all([
-    fetch(csvUrl(CURRENT_YEAR_SHEET)).then(r => { if (!r.ok) throw new Error('Unable to load standings'); return r.text(); }),
-    fetch(csvUrl('Red Rounds')).then(r => { if (!r.ok) throw new Error('Unable to load Red Rounds'); return r.text(); })
-  ]);
+  const [standingsText, redRoundsText, ...historyTexts] = await Promise.all([
+  fetch(csvUrl(CURRENT_YEAR_SHEET)).then(r => {
+    if (!r.ok) throw new Error('Unable to load standings');
+    return r.text();
+  }),
+  fetch(csvUrl('Red Rounds')).then(r => {
+    if (!r.ok) throw new Error('Unable to load Red Rounds');
+    return r.text();
+  }),
+  ...HISTORY_SHEETS.map(sheet =>
+    fetch(csvUrl(sheet)).then(r => (r.ok ? r.text() : ''))
+  )
+]);
 
   const sheet = parseCSV(standingsText);
   const redSheet = parseCSV(redRoundsText);
