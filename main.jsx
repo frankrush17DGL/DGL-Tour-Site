@@ -265,7 +265,13 @@ function ThisDayInDGLHistory() {
   });
 
   const matches = moments.filter(moment => moment.date === monthDay);
-  const moment = matches[0] || moments[today.getDate() % moments.length];
+  const moment = matches[0] || {
+  date: monthDay,
+  year: 'DGL Archives',
+  type: '📜 Annals of History',
+  title: 'No official moment recorded for today yet',
+  body: 'The DGL archives are growing. Add a memory, round, or legendary moment for this date.'
+};
 
   return (
     <article className="card history-card">
