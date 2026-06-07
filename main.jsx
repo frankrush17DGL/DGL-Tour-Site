@@ -233,7 +233,7 @@ const finalCourse =
     events.push({
       event: eventNo || events.length + 1,
       date: date || '',
-      course: course || 'Course TBD',
+      course: finalCourse,
       tees: tees || '',
       time: time || ''
     });
