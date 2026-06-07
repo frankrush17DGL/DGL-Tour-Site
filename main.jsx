@@ -93,13 +93,18 @@ function findPot(sheet, label) {
 
 function parseLooseDate(value) {
   if (!value) return null;
+
   const raw = String(value).trim();
+
   const match = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+
   if (match) {
     let year = Number(match[3]);
     if (year < 100) year += 2000;
+
     return new Date(year, Number(match[1]) - 1, Number(match[2]));
   }
+
   const parsed = new Date(raw);
   return Number.isNaN(parsed.getTime()) ? null : parsed;
 }
