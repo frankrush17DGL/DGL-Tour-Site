@@ -284,7 +284,7 @@ function EventCard({ event }) {
     </div>
   );
 }
-function ThisDayInDGLHistory() {
+function ThisDayInDGLHistory({ moments = [] }) {
   const moments = [
     {
       date: 'September 26',
