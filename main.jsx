@@ -399,7 +399,9 @@ function HomePage({ data, syncStatus, goRedRoom }) {
   <h2>Event Schedule</h2>
 
   <h3>Upcoming</h3>
-
+<pre style={{fontSize:'10px', whiteSpace:'pre-wrap', color:'#ffd35a'}}>
+{JSON.stringify(data.events, null, 2)}
+</pre>
   <div className="event-list">
     {upcomingEvents.length ? upcomingEvents.map(event => (
       <EventCard event={event} key={'upcoming-' + event.event + event.course} />
