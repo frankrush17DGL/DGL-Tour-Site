@@ -215,7 +215,19 @@ function parseEventColumns(sheet, sheetName = CURRENT_YEAR_SHEET) {
     const course = cleanCourse(sheet[3]?.[col]);
     const tees = cleanTees(sheet[4]?.[col]);
     const time = cleanTime(sheet[5]?.[col]);
+const hasData =
+  eventNo ||
+  date ||
+  course ||
+  tees ||
+  time;
 
+if (!hasData) continue;
+
+const finalCourse =
+  course && course.trim() !== ''
+    ? course
+    : 'Course TBD';
     if (!eventNo && !date && !course) continue;
 
     events.push({
