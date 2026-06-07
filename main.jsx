@@ -96,10 +96,10 @@ function parseLooseDate(value) {
 
   const raw = String(value).trim();
 
-  const match = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+  const match = raw.match(/^(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?$/);
 
   if (match) {
-    let year = Number(match[3]);
+    let year = match[3] ? Number(match[3]) : new Date().getFullYear();
     if (year < 100) year += 2000;
 
     return new Date(year, Number(match[1]) - 1, Number(match[2]));
