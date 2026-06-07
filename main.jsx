@@ -176,11 +176,11 @@ historyTexts.forEach((text, sheetIndex) => {
   const historySheet = parseCSV(text);
 
   for (let col = 4; col <= 20; col++) {
-    const eventNo = historySheet[1]?.[col];
-    const date = historySheet[2]?.[col];
-    const course = historySheet[3]?.[col];
-    const tees = historySheet[4]?.[col];
-    const time = historySheet[5]?.[col];
+    const eventNo = historySheet[1]?.[col] || historySheet[0]?.[col];
+const date = historySheet[2]?.[col] || historySheet[1]?.[col];
+const course = historySheet[3]?.[col] || historySheet[2]?.[col];
+const tees = historySheet[4]?.[col] || '';
+const time = historySheet[5]?.[col] || '';
 
     if (!date || !course) continue;
 
