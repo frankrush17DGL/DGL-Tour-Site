@@ -375,7 +375,7 @@ function HomePage({ data, syncStatus, goRedRoom }) {
           </div>
           <p className="note">Eagle Pot Last Hit<br/>Scott Wishart<br/>Dutch 27 (Red 9)<br/>Hole #5 • 520-yard Par 5<br/>9/26/25 • Paid $117.50</p>
         </article>
-<ThisDayInDGLHistory />
+<ThisDayInDGLHistory moments={data.historyMoments} />
         <article className="card red-room-entry-card">
           <p className="eyebrow">Members May View. Legends Had To Earn It.</p>
           <h2>🔴 Red Room Entrance</h2>
