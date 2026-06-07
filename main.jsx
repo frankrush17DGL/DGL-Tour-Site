@@ -303,8 +303,7 @@ function ThisDayInDGLHistory({ moments = [] }) {
   year: 'DGL Archives',
   type: '📜 Annals of History',
   title: 'No official moment recorded for today yet',
-  body: 'The DGL archives are growing. Add a memory, round, or legendary moment for this date.'
-};
+  body: `Debug: ${moments.length} history moments loaded. Looking for ${monthDay}.`
 
   return (
     <article className="card history-card">
