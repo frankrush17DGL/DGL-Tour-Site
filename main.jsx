@@ -285,29 +285,7 @@ function EventCard({ event }) {
   );
 }
 function ThisDayInDGLHistory({ moments = [] }) {
-  const moments = [
-    {
-      date: 'September 26',
-      year: '2025',
-      type: '💰 Big Money',
-      title: 'Scott Wishart claimed the Eagle Pot',
-      body: 'Dutch 27 (Red 9), Hole #5 — 520-yard Par 5. Paid $117.50.'
-    },
-    {
-      date: 'June 3',
-      year: '2021',
-      type: '🔴 Red Room Moment',
-      title: 'Alex Pletsch entered Red Room royalty',
-      body: 'A legendary net -10.3 at Eagle Valley still sits atop the all-time Red Room.'
-    },
-    {
-      date: 'April 2',
-      year: '2026',
-      type: '🏌️ Tour Stop',
-      title: 'DGL went south to Kelly Plantation',
-      body: 'The 2026 season opened in Destin, Florida.'
-    }
-  ];
+  
 
   const today = new Date();
   const monthDay = today.toLocaleDateString('en-US', {
