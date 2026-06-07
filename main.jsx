@@ -228,7 +228,6 @@ const finalCourse =
   course && course.trim() !== ''
     ? course
     : 'Course TBD';
-    if (!eventNo && !date && !course) continue;
 
     events.push({
       event: eventNo || events.length + 1,
