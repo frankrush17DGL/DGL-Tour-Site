@@ -14,7 +14,7 @@ const HISTORY_SHEETS = [
 ];
 
 const HOSTESS_SOURCES = [
-  '/44B7C86E-3315-4324-A8D9-B70002267AB4.png',
+  '/BB902404-53A2-4808-A930-773B9373AF93.png',
   '/red-room-hostess.png'
 ];
 
