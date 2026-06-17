@@ -273,7 +273,7 @@ function parseFutureEvents(text) {
   const rWeek = rowIndex(weekRow, 0);
   const rEvent = rowIndex(eventRow, 1);
   const rDate = rowIndex(dateRow, 2);
-  const rCourse = rowIndex(courseRow, 3);
+  const rCourse = 3;
   const rTime = rowIndex(timeRow, 4);
   const rNotes = rowIndex(notesRow, 5);
 
