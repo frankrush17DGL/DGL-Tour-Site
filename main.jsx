@@ -1185,7 +1185,7 @@ function EventCard({ event }) {
   return (
     <div className={'event ' + (event.status === 'Past' ? 'event-past' : 'event-upcoming')}>
       <span>{event.status === 'Past' ? 'Recent Result' : 'Upcoming'} • Event {event.event}</span>
-      <strong>{event.course}</strong>
+      <strong>{event.event} | {event.course} | {event.time}</strong>
       <small>
         {event.date}
         {event.time ? ' • ' + event.time : ''}
