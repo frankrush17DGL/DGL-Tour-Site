@@ -1183,18 +1183,20 @@ function EventCard({ event }) {
     : 'Completed';
 
   return (
-    <div className={'event ' + (event.status === 'Past' ? 'event-past' : 'event-upcoming')}>
-      <span>{event.status === 'Past' ? 'Recent Result' : 'Upcoming'} • Event {event.event}</span>
-      <strong>{event.event} | {event.course} | {event.time}</strong>
-      <small>
-        {event.date}
-        {event.time ? ' • ' + event.time : ''}
-        {event.tees ? ' • ' + event.tees : ''}
-      </small>
-      {event.notes ? <small>{event.notes}</small> : null}
-      <em>{countdown}</em>
-    </div>
-  );
+  <div className={'event ' + (event.status === 'Past' ? 'event-past' : 'event-upcoming')}>
+    <span>{event.status === 'Past' ? 'Recent Result' : 'Upcoming'} • Event {event.event}</span>
+
+    <strong>{event.course}</strong>
+
+    <small>
+      {event.date}
+      {event.time ? ' • ' + event.time : ''}
+      {event.notes ? ' • ' + event.notes : ''}
+    </small>
+
+    <em>{countdown}</em>
+  </div>
+);
 }
 
 function ThisDayInDGLHistory({ moments = [], goAnnals }) {
