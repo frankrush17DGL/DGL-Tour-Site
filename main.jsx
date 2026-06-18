@@ -1065,8 +1065,7 @@ async function loadLiveData() {
   const events = parseFutureEvents(futureEventsText);
 
 alert(
-  'PARSED EVENTS:\n\n' +
-  JSON.stringify(events.slice(0,5), null, 2)
+  JSON.stringify(rows.slice(0,6), null, 2)
 );
   const redRounds = [];
   for (let i = 1; i < redSheet.length; i++) {
