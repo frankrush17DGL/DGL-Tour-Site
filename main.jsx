@@ -172,7 +172,6 @@ function cleanName(value) {
   return aliases[name] || name;
 }
 
-
 function canonicalName(value) {
   return cleanName(value).toLowerCase().replace(/[^a-z0-9]/g, '');
 }
