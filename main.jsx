@@ -1317,7 +1317,7 @@ async function loadLiveData() {
 
   const events = safeParse('future events', fallbackData.events, () => {
     const parsed = parseFutureEvents(futureEventsText);
-    return parsed.length ? parsed : fallbackData.events;
+    return parsed.length ? parsed : [];
   });
 
   const redRounds = safeParse('red rounds', fallbackData.redRounds, () => {
