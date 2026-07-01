@@ -2400,7 +2400,7 @@ function PlayersPage({ data, goHome }) {
         <h1>Tour <span>Cards</span></h1>
       </div>
 
-      <DebugDataPanel data={data} />
+    
 
       <div className="dgl84-card-grid">
         {profiles.length ? profiles.map(profile => (
