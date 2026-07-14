@@ -99,7 +99,15 @@ function App() {
               <button onClick={goPlayers}>Players</button>
             </div>
           </nav>
-          <HomePage data={data} syncStatus={syncStatus} goRedRoom={goRedRoom} goAnnals={goAnnals} goStateTrophies={goStateTrophies} goSportsbook={goSportsbook} goPlayers={goPlayers} />
+          <HomePage
+            data={data}
+            syncStatus={syncStatus}
+            goRedRoom={goRedRoom}
+            goAnnals={goAnnals}
+            goStateTrophies={goStateTrophies}
+            goSportsbook={goSportsbook}
+            goPlayers={goPlayers}
+          />
         </>
       )}
 
