@@ -7,6 +7,7 @@ import StateTrophiesPage from './StateTrophies.jsx';
 import SportsbookPage from './Sportsbook.jsx';
 import PlayersPage from './Players.jsx';
 
+
 function App() {
   const [data, setData] = useState(fallbackData);
   const [syncStatus, setSyncStatus] = useState('Loading live Google Sheet…');
