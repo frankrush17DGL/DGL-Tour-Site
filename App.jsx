@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fallbackData, loadLiveData } from './core.js';
+import { fallbackData, loadLiveData } from './core.jsx';
 import HomePage from './Home.jsx';
 import RedRoomPage from './RedRoom.jsx';
 import AnnalsPage from './Annals.jsx';
