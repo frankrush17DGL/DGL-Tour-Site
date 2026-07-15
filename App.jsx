@@ -36,17 +36,9 @@ function App() {
   }, []);
 
   useEffect(() => {
-    loadLiveData()
-      .then(liveData => {
-        setData(liveData);
-        setSyncStatus('Live from Google Sheets');
-      })
-      .catch(error => {
-        console.error('DGL LIVE DATA FAILED', error);
-        setSyncStatus('LIVE DATA ERROR: ' + (error?.message || String(error)));
-        window.DGL_LAST_ERROR = error;
-      });
-  }, []);
+  console.log("DGL running in fallback mode");
+  setSyncStatus("Fallback mode");
+}, []);
 
   const goRedRoom = () => {
     window.location.hash = 'red-room';
