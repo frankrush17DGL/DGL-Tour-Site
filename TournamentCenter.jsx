@@ -45,7 +45,9 @@ function EventMiniCard({ event }) {
 
 function TournamentCenter({ events = [], sportsbook = [], leader = {} }) {
   const upcoming = Array.isArray(events) ? events : [];
+  console.log("TOURNAMENT EVENTS", events);
   const featuredEvent = upcoming[0] || {};
+  console.log("FEATURED EVENT", featuredEvent);
   const secondaryEvents = upcoming.slice(1, 4);
   const insights = sportsbookInsights(Array.isArray(sportsbook) ? sportsbook : []);
   const countdown = useCountdown(featuredEvent);
