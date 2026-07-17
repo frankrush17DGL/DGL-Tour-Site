@@ -1478,9 +1478,23 @@ async function loadLiveData() {
   const events = safeParse('future events', fallbackData.events, () => {
     // Primary source: the dedicated Future Events tab.
     const dedicatedEvents = parseFutureEvents(futureEventsText);
-    if (Array.isArray(dedicatedEvents) && dedicatedEvents.length) {
-      return dedicatedEvents;
-    }
+
+// Only trust dedicated events if they contain real course data.
+const validDedicatedEvents =
+  Array.isArray(dedicatedEvents)
+    ? dedicatedEvents.filter(
+        event =>
+          event &&
+          event.course &&
+          event.course !== 'Course TBD' &&
+          event.date &&
+          event.date !== 'Date TBD'
+      )
+    : [];
+
+if (validDedicatedEvents.length) {
+  return validDedicatedEvents;
+}
 
     // Secondary source: the event columns embedded in the current standings tab.
     // This keeps Tournament Center live if Google temporarily fails to export
