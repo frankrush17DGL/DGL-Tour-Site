@@ -427,10 +427,9 @@ function parseFutureEvents(text) {
       ], col);
 
       const committedPlayers = committedPlayersRaw
-        .split(/[,;|
-]+/)
-        .map(cleanName)
-        .filter(Boolean);
+  .split(/[,\r\n;|]+/)
+  .map(cleanName)
+  .filter(Boolean);
 
       events.push({
         week: valueAt(['Week'], col),
