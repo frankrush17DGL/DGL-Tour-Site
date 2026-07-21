@@ -1,35 +1,16 @@
-import React, { useState } from 'react';
-import { csvUrl, parseCSV, textCell, stripLabel, cleanEventNo, cleanDate, cleanCourse, cleanTees, cleanTime, yearFromSheetName, numberFromCell, cleanName, canonicalName, findHeaderIndex, findHeaderRow, headerIndex, parsePlayers, playerMeta, normalizeAssetUrl, photoUrlFor, headshotUrlFor, cardColorValue, cardHighlightColor, looksLikeDateText, looksLikeTimeText, parseFutureEvents, fetchFutureEventsSheet, parseThisDayHistory, parseStateTrophies, formatRank, rankBadge, findPot, parseLooseDate, monthDayFromDate, decorateEvents, parseEventColumns, rowHasLabel, numericValuesFromRow, extractPlayerBlocks, findRowInBlock, findRowInBlockAny, lastNumericValue, parseCurrentStandings, strictNumberFromCell, findHistoricalStandingsColumns, isHistoricalPlayerName, nearestHistoricalPlayerName, parseYearStandings, findSheetValueNearLabel, playerSlug, imageCandidates, PlayerPhoto, AssetPhoto, parseAnnalsRecords, buildAnnalsYearsFromRecords, buildAnnalsYears, buildHistoryMoments, fetchFirstAvailableSheet, normalizeHeader, parsePercentCell, parseSportsbook, formatOdds, formatPercent, sportsbookInsights, safeFetchText, safeParse, loadLiveData, money, medal, initials, netNumber, formatNet, tierForNet, ordinal, rankedRedRounds, formatCommitment, recordIsFirstPlace, buildPlayerProfiles, SHEET_ID, CURRENT_YEAR_SHEET, HISTORY_SHEETS, SPORTSBOOK_SHEETS, ANNALS_SHEETS, PLAYERS_SHEETS, STATE_TROPHY_SHEETS, THIS_DAY_SHEETS, FUTURE_EVENTS_SHEETS, HOSTESS_SOURCES, fallbackData } from './core.jsx';
+import React from 'react';
+import {
+  fallbackData,
+  PlayerPhoto,
+  photoUrlFor,
+  rankBadge,
+  rankedRedRounds,
+  money,
+  sportsbookInsights,
+  formatOdds
+} from './core.jsx';
+import TournamentCenter from './TournamentCenter.jsx';
 
-
-function EventCard({ event }) {
-  const countdown = event.status === 'Upcoming'
-    ? typeof event.daysAway === 'number'
-      ? event.daysAway === 0
-        ? 'Today'
-        : event.daysAway > 0
-          ? `${event.daysAway} days away`
-          : 'Scheduled'
-      : 'Scheduled'
-    : 'Completed';
-
-  return (
-  <div className={'event ' + (event.status === 'Past' ? 'event-past' : 'event-upcoming')}>
-    <span>{event.status === 'Past' ? 'Recent Result' : 'Upcoming'} • Event {event.event}</span>
-
-    <strong>{event.course}</strong>
-
-    <small>
-      {event.date}
-      {event.time ? ' • ' + event.time : ''}
-    </small>
-
-    {formatCommitment(event.notes) ? <small className="commit-count">{formatCommitment(event.notes)}</small> : null}
-
-    <em>{countdown}</em>
-  </div>
-);
-}
 
 function ThisDayInDGLHistory({ moments = [], goAnnals }) {
   const today = new Date();
@@ -200,77 +181,11 @@ function HomePage({ data, syncStatus, goRedRoom, goAnnals, goStateTrophies, goSp
           <button onClick={goAnnals} className="gold-button">ENTER THE ANNALS</button>
         </article>
 
-        <article className="card events-card tournament-center-v106" id="events">
-          <div className="section-head">
-            <div>
-              <p className="eyebrow">Tournament Center</p>
-              <h2>{featuredEvent.course || 'Next Event TBD'}</h2>
-            </div>
-            {featuredEvent.event ? <span className="updated">EVENT {featuredEvent.event}</span> : null}
-          </div>
-
-          {featuredEvent.course ? (
-            <>
-              <div className="tournament-hero-v106">
-                {featuredEvent.photoUrl ? (
-                  <AssetPhoto src={featuredEvent.photoUrl} alt={featuredEvent.course} className="tournament-course-photo-v106" fallback="⛳" />
-                ) : (
-                  <div className="tournament-course-placeholder-v106"><span>⛳</span><strong>{featuredEvent.course}</strong></div>
-                )}
-                <div className="tournament-overlay-v106">
-                  <span>{featuredEvent.date || 'Date TBD'}{featuredEvent.time ? ` • ${featuredEvent.time}` : ''}</span>
-                  <strong>{typeof featuredEvent.daysAway === 'number' && featuredEvent.daysAway >= 0 ? (featuredEvent.daysAway === 0 ? 'TEEING OFF TODAY' : `${featuredEvent.daysAway} DAYS TO TEE OFF`) : 'SCHEDULED'}</strong>
-                </div>
-              </div>
-
-              <div className="tournament-facts-v106">
-                <div><span>Favorite</span><b>{insights.favorite.player || leader.name || 'TBD'}</b><em>{insights.favorite.odds ? formatOdds(insights.favorite.odds) : ''}</em></div>
-                <div><span>Best Value</span><b>{insights.bestValue.player || 'TBD'}</b><em>{insights.bestValue.valueLabel || ''}</em></div>
-                <div><span>Field</span><b>{formatCommitment(featuredEvent.notes) || 'TBD'}</b><em>committed</em></div>
-              </div>
-
-              {(featuredEvent.courseDetails || featuredEvent.courseWebsite || featuredEvent.googleMap) ? (
-                <div className="tournament-extra-v107">
-                  {featuredEvent.courseDetails ? (
-                    <div className="tournament-course-details-v107">
-                      <span>Course Details</span>
-                      <strong>{featuredEvent.courseDetails}</strong>
-                    </div>
-                  ) : null}
-                  <div className="tournament-actions-v107">
-                    {featuredEvent.courseWebsite ? <a href={featuredEvent.courseWebsite} target="_blank" rel="noreferrer">Visit Course Website</a> : null}
-                    {featuredEvent.googleMap ? <a href={featuredEvent.googleMap} target="_blank" rel="noreferrer">Open Google Maps</a> : null}
-                  </div>
-                </div>
-              ) : null}
-
-              {upcomingEvents.slice(1, 4).length ? (
-                <div className="tournament-next-list-v106">
-                  <p className="eyebrow">Also Upcoming</p>
-                  {upcomingEvents.slice(1, 4).map(event => <EventCard event={event} key={'next-' + event.event + event.course} />)}
-                </div>
-              ) : null}
-            </>
-          ) : <p className="note">No future events currently entered.</p>}
-
-          <style>{`
-            .tournament-center-v106{grid-column:1/-1;padding:20px}
-            .tournament-hero-v106{position:relative;min-height:280px;border-radius:20px;overflow:hidden;border:1px solid rgba(226,184,73,.3);background:#100b08}
-            .tournament-course-photo-v106{display:block;width:100%;height:clamp(280px,42vw,480px);object-fit:cover}
-            .tournament-course-placeholder-v106{height:clamp(280px,42vw,480px);display:grid;place-content:center;text-align:center;background:radial-gradient(circle at 50% 35%,rgba(172,129,39,.25),transparent 35%),linear-gradient(145deg,#21170d,#070605);color:#f5dfaa}
-            .tournament-course-placeholder-v106 span{font-size:64px}.tournament-course-placeholder-v106 strong{font-size:clamp(24px,5vw,48px);margin-top:10px}
-            .tournament-overlay-v106{position:absolute;inset:auto 0 0;padding:54px 18px 18px;background:linear-gradient(transparent,rgba(0,0,0,.9));display:flex;align-items:end;justify-content:space-between;gap:12px;color:#fff}
-            .tournament-overlay-v106 span{font-weight:700}.tournament-overlay-v106 strong{color:#f0c75e;letter-spacing:.1em;font-size:12px}
-            .tournament-facts-v106{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
-            .tournament-facts-v106>div{padding:14px;border-radius:15px;border:1px solid rgba(226,184,73,.2);background:rgba(0,0,0,.28);display:grid;gap:3px}
-            .tournament-facts-v106 span{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#d7ad50;font-weight:800}.tournament-facts-v106 b{font-size:18px}.tournament-facts-v106 em{font-style:normal;color:#c8bfae;font-size:12px}
-            .tournament-extra-v107{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:12px;padding:14px;border-radius:15px;border:1px solid rgba(226,184,73,.2);background:rgba(0,0,0,.24)}
-            .tournament-course-details-v107{display:grid;gap:3px}.tournament-course-details-v107 span{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#d7ad50;font-weight:800}.tournament-course-details-v107 strong{color:#fff;font-size:15px}
-            .tournament-actions-v107{display:flex;flex-wrap:wrap;gap:8px}.tournament-actions-v107 a{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:10px 14px;border-radius:999px;border:1px solid rgba(240,199,94,.5);background:linear-gradient(180deg,rgba(240,199,94,.2),rgba(111,73,12,.25));color:#ffe6a2;text-decoration:none;font-size:11px;font-weight:900;letter-spacing:.06em;text-transform:uppercase}
-            .tournament-next-list-v106{margin-top:18px}.tournament-next-list-v106 .event-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-            @media(max-width:760px){.tournament-center-v106{padding:14px}.tournament-overlay-v106{align-items:start;flex-direction:column}.tournament-facts-v106{grid-template-columns:1fr}.tournament-extra-v107{align-items:stretch;flex-direction:column}.tournament-actions-v107 a{flex:1}.tournament-next-list-v106 .event-list{grid-template-columns:1fr}}
-          `}</style>
-        </article>
+        <TournamentCenter
+          events={data.events}
+          sportsbook={data.sportsbook}
+          leader={leader}
+        />
 
         <article className="card sportsbook-card" id="sportsbook">
           <p className="eyebrow">For Entertainment Purposes</p>

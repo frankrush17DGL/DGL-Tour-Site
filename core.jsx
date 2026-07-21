@@ -42,7 +42,24 @@ const fallbackData = {
     { rank: 3, name: 'Nic Wendel', points: 0.3 }
   ],
   sidePots: { sandy: 268, eagle: 151, holeInOne: 268 },
-  events: [],
+  events: [
+    {
+      event: '148',
+      week: '7/20-7/26',
+      date: '7/21/26',
+      course: 'Rush Creek GC',
+      time: '4:40 PM',
+      tees: '',
+      notes: '2 committed',
+      photoUrl: '/IMG_8339.jpeg',
+      courseWebsite: 'https://www.rushcreek.com',
+      googleMap: '',
+      courseDetails: '',
+      courseLogo: '',
+      scorecardUrl: '',
+      flyoverUrl: ''
+    }
+  ],
   redRounds: [
     { place: 1, player: 'Alex Pletsch', course: 'Eagle Valley', date: '6/3/21', score: '4 Thru 18', net: -10.3 },
     { place: 2, player: 'Max Olson', course: 'Royal', date: '9/3/23', score: '5 Thru 18', net: -7.8 },
@@ -359,154 +376,174 @@ function looksLikeTimeText(value) {
   return /^(\d{1,2}:\d{2})(\s?[AP]M)?$/i.test(textCell(value));
 }
 
+
 function parseFutureEvents(text) {
   if (!text) return [];
 
   const rows = parseCSV(text).map(row => row || []);
   if (!rows.length) return [];
 
-  const cleanLabel = value => String(value || '')
-    .replace(/:/g, '')
-    .replace(/[^a-z0-9]/gi, '')
-    .trim()
-    .toLowerCase();
+  const cleanLabel = value => normalizeHeader(String(value || '').replace(/:/g, ''));
+  const labelRows = {};
 
-  const findRow = labels => {
-    const targets = labels.map(cleanLabel);
-    const index = rows.findIndex(row => targets.includes(cleanLabel(row[0])));
-    return index >= 0 ? index : -1;
-  };
+  rows.forEach((row, rowIndex) => {
+    const key = cleanLabel(row[0]);
+    if (key) labelRows[key] = rowIndex;
+  });
 
-  // If this isn't actually the Future Events sheet (for example the export
-  // returned another tab), abort instead of mis-parsing Power Model rows.
-  if (!rows.some(r => cleanLabel(r[0]) === 'event') || !rows.some(r => cleanLabel(r[0]) === 'course')) {
-    return [];
-  }
-
-  const eventRow = findRow(['Event']);
-  const dateRow = findRow(['Date']);
-  const timeRow = findRow(['Time']);
-  const weekRow = findRow(['Week']);
-  let courseRow = findRow(['Course']);
-  let notesRow = findRow(['Notes', 'Notes Number of Commits', 'Number of Commits', 'Commits']);
-  const photoRow = findRow(['Photo', 'Photo URL', 'Course Photo', 'Course Photo URL', 'Photo of course']);
-  const websiteRow = findRow(['Course Website', 'Website', 'Course URL']);
-  const mapRow = findRow(['Google Map', 'Google Maps', 'Map', 'Map URL']);
-  const courseDetailsRow = findRow(['Yardage / Rating / Slope', 'Yardage Rating Slope', 'Yardage', 'Course Details']);
-
-  // If Google exports the Course label strangely, infer it as the row between Date and Time.
-  if (courseRow < 0 && dateRow >= 0 && timeRow >= 0 && timeRow > dateRow + 1) {
-    courseRow = dateRow + 1;
-  }
-
-  // Last-resort course-row inference: find the row with multiple text course-like values.
-  if (courseRow < 0) {
-    let best = -1;
-    let bestScore = 0;
-    rows.slice(0, 12).forEach((row, rowIndex) => {
-      const score = row.slice(1).filter(cell => {
-        const value = textCell(cell);
-        if (!value) return false;
-        if (looksLikeDateText(value) || looksLikeTimeText(value)) return false;
-        if (/^\d+$/.test(value)) return false;
-        if (/\d{1,2}\/\d{1,2}/.test(value)) return false;
-        return /[a-zA-Z]/.test(value);
-      }).length;
-      if (score > bestScore) {
-        best = rowIndex;
-        bestScore = score;
+  // Dedicated Future Events sheet: labels in column A and one event per column.
+  // This supports B, C, D, etc. as separate upcoming events.
+  if (labelRows.course !== undefined || labelRows.event !== undefined || labelRows.date !== undefined) {
+    const maxCol = Math.max(...rows.map(row => row.length), 2);
+    const valueAt = (keys, col) => {
+      for (const key of keys) {
+        const rowIndex = labelRows[cleanLabel(key)];
+        if (rowIndex !== undefined) return textCell(rows[rowIndex]?.[col]);
       }
-    });
-    if (bestScore >= 2) courseRow = best;
-  }
+      return '';
+    };
 
-  if (notesRow < 0 && timeRow >= 0) notesRow = timeRow + 1;
-
-  const rWeek = weekRow >= 0 ? weekRow : 0;
-  const rEvent = eventRow >= 0 ? eventRow : 1;
-  const rDate = dateRow >= 0 ? dateRow : 2;
-  const rCourse = courseRow >= 0 ? courseRow : 3;
-  const rTime = timeRow >= 0 ? timeRow : 4;
-  const rNotes = notesRow >= 0 ? notesRow : 5;
-  const rPhoto = photoRow >= 0 ? photoRow : -1;
-  const rWebsite = websiteRow >= 0 ? websiteRow : -1;
-  const rMap = mapRow >= 0 ? mapRow : -1;
-  const rCourseDetails = courseDetailsRow >= 0 ? courseDetailsRow : -1;
-
-  const maxCol = Math.max(
-    rows[rWeek]?.length || 0,
-    rows[rEvent]?.length || 0,
-    rows[rDate]?.length || 0,
-    rows[rCourse]?.length || 0,
-    rows[rTime]?.length || 0,
-    rows[rNotes]?.length || 0,
-    rPhoto >= 0 ? (rows[rPhoto]?.length || 0) : 0,
-    rWebsite >= 0 ? (rows[rWebsite]?.length || 0) : 0,
-    rMap >= 0 ? (rows[rMap]?.length || 0) : 0,
-    rCourseDetails >= 0 ? (rows[rCourseDetails]?.length || 0) : 0,
-    1
-  );
-
-  const events = [];
-
-  for (let col = 1; col < maxCol; col++) {
-    const week = textCell(rows[rWeek]?.[col]);
-    const eventNo = textCell(rows[rEvent]?.[col]);
-    const date = textCell(rows[rDate]?.[col]);
-    const course = textCell(rows[rCourse]?.[col]);
-    const time = textCell(rows[rTime]?.[col]);
-    const notes = textCell(rows[rNotes]?.[col]);
-    const photoUrl = rPhoto >= 0 ? normalizeAssetUrl(rows[rPhoto]?.[col]) : '';
-    const courseWebsite = rWebsite >= 0 ? textCell(rows[rWebsite]?.[col]) : '';
-    const googleMap = rMap >= 0 ? textCell(rows[rMap]?.[col]) : '';
-    const courseDetails = rCourseDetails >= 0 ? textCell(rows[rCourseDetails]?.[col]) : '';
-
-    if (!week && !eventNo && !date && !course && !time && !notes && !photoUrl && !courseWebsite && !googleMap && !courseDetails) continue;
-
-    const parsed = parseLooseDate(date, new Date().getFullYear());
+    const events = [];
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const daysAway = parsed ? Math.ceil((parsed.getTime() - today.getTime()) / 86400000) : null;
+
+    for (let col = 1; col < maxCol; col++) {
+      const rawEvent = valueAt(['Event', 'Event Number', 'Event #'], col);
+      const rawDate = valueAt(['Date'], col);
+      const rawCourse = valueAt(['Course', 'Course Name'], col);
+
+      if (!rawEvent && !rawDate && !rawCourse) continue;
+
+      const parsed = parseLooseDate(rawDate, new Date().getFullYear());
+      const committedPlayersRaw = valueAt([
+        'Committed Players',
+        'Players Committed',
+        'Committed',
+        'Notes/number of commits',
+        'Notes/number of competitors',
+        'Number of competitors',
+        'Number of commits',
+        'Notes'
+      ], col);
+
+      const committedPlayers = committedPlayersRaw
+  .split(/[,\r\n;|]+/)
+  .map(cleanName)
+  .filter(Boolean);
+
+      events.push({
+        week: valueAt(['Week'], col),
+        event: cleanEventNo(rawEvent || String(events.length + 1)),
+        date: cleanDate(rawDate),
+        course: cleanCourse(rawCourse),
+        time: cleanTime(valueAt(['Time', 'Tee Time'], col)),
+        notes: committedPlayersRaw,
+        committedPlayers,
+        photoUrl: normalizeAssetUrl(valueAt(['Photo of course', 'Course Photo', 'Photo'], col)),
+        courseWebsite: valueAt(['Course website', 'Website'], col),
+        googleMap: valueAt(['Google Maps', 'Map'], col),
+        courseDetails: valueAt([
+          'Yardage/slope/rating',
+          'Yardage/rating/slope',
+          'Course details'
+        ], col),
+        scorecardUrl: valueAt(['Scorecard'], col),
+        flyoverUrl: valueAt(['Flyover'], col),
+        courseLogo: normalizeAssetUrl(valueAt(['Course logo', 'Logo'], col)),
+        tees: cleanTees(valueAt(['Tees'], col)),
+        status: parsed && parsed < today ? 'Past' : 'Upcoming',
+        daysAway: parsed ? Math.ceil((parsed.getTime() - today.getTime()) / 86400000) : null,
+        timestamp: parsed ? parsed.getTime() : Number.MAX_SAFE_INTEGER,
+        sortOrder: events.length
+      });
+    }
+
+    return events
+      .filter(event => event.status !== 'Past')
+      .sort((a, b) => a.timestamp - b.timestamp || a.sortOrder - b.sortOrder);
+  }
+
+  // Legacy horizontal layout.
+  const findPosition = labels => {
+    const targets = labels.map(cleanLabel);
+    for (let row = 0; row < Math.min(rows.length, 30); row++) {
+      for (let col = 0; col < (rows[row] || []).length; col++) {
+        if (targets.includes(cleanLabel(rows[row][col]))) return { row, col };
+      }
+    }
+    return null;
+  };
+
+  const positions = {
+    week: findPosition(['Week']),
+    event: findPosition(['Event', 'Event Number', 'Event #']),
+    date: findPosition(['Date']),
+    course: findPosition(['Course', 'Course Name']),
+    time: findPosition(['Time', 'Tee Time'])
+  };
+
+  if (!positions.event || !positions.date || !positions.course) return [];
+
+  const startCol = Math.max(...Object.values(positions).filter(Boolean).map(position => position.col)) + 1;
+  const maxCol = Math.max(...rows.map(row => row.length), startCol);
+  const cellAt = (position, col) => position ? textCell(rows[position.row]?.[col]) : '';
+  const events = [];
+
+  for (let col = startCol; col < maxCol; col++) {
+    const parsed = parseLooseDate(cellAt(positions.date, col), new Date().getFullYear());
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
     events.push({
-      event: eventNo || events.length + 1,
-      date,
-      course: course || 'Course TBD',
-      time,
+      week: cellAt(positions.week, col),
+      event: cleanEventNo(cellAt(positions.event, col)),
+      date: cleanDate(cellAt(positions.date, col)),
+      course: cleanCourse(cellAt(positions.course, col)),
+      time: cleanTime(cellAt(positions.time, col)),
+      notes: '',
+      committedPlayers: [],
       tees: '',
-      notes,
-      photoUrl,
-      courseWebsite,
-      googleMap,
-      courseDetails,
-      week,
-      status: 'Upcoming',
-      daysAway,
+      status: parsed && parsed < today ? 'Past' : 'Upcoming',
+      daysAway: parsed ? Math.ceil((parsed.getTime() - today.getTime()) / 86400000) : null,
+      timestamp: parsed ? parsed.getTime() : Number.MAX_SAFE_INTEGER,
       sortOrder: events.length
     });
   }
 
-  return events;
+  return events.filter(event => event.status !== 'Past').sort((a, b) => a.timestamp - b.timestamp);
 }
 
+
 async function fetchFutureEventsSheet() {
-  const urls = [
-    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&sheet=${encodeURIComponent('Future Events')}&cacheBust=${Date.now()}`,
-    csvUrl('Future Events')
-  ];
+  // Use the GViz CSV endpoint directly. The generic /export endpoint can
+  // return a nonempty response for the wrong tab and prevent the correct
+  // Future Events CSV from being used.
+  const url = csvUrl('Future Events');
 
-  for (const url of urls) {
-    try {
-      const response = await fetch(url);
-      if (!response.ok) continue;
-      const text = await response.text();
-      if (text && text.trim()) return text;
-    } catch (error) {
-      console.warn('Unable to load Future Events sheet', error);
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      console.warn(
+        'Unable to load Future Events sheet:',
+        response.status,
+        response.statusText
+      );
+      return '';
     }
-  }
 
-  return '';
+    const text = await response.text();
+
+    if (!text || !text.trim()) {
+      console.warn('Future Events sheet returned blank CSV');
+      return '';
+    }
+
+    return text;
+  } catch (error) {
+    console.warn('Unable to load Future Events sheet', error);
+    return '';
+  }
 }
 
 function parseThisDayHistory(text) {
@@ -1468,9 +1505,25 @@ async function loadLiveData() {
     holeInOne: findPot(sheet, 'Hole in One') || fallbackData.sidePots.holeInOne
   }));
 
-  const events = safeParse('future events', [], () => {
-    const parsed = parseFutureEvents(futureEventsText);
-    return Array.isArray(parsed) ? parsed : [];
+  const events = safeParse('future events', fallbackData.events, () => {
+    // Primary source: the dedicated Future Events tab.
+    const dedicatedEvents = parseFutureEvents(futureEventsText);
+    if (Array.isArray(dedicatedEvents) && dedicatedEvents.length) {
+      return dedicatedEvents;
+    }
+
+    // Secondary source: the event columns embedded in the current standings tab.
+    // This keeps Tournament Center live if Google temporarily fails to export
+    // the dedicated Future Events tab or its layout changes.
+    const standingsEvents = parseEventColumns(sheet, CURRENT_YEAR_SHEET)
+      .filter(event => event.status !== 'Past');
+    if (standingsEvents.length) {
+      return standingsEvents;
+    }
+
+    // Last-resort known event so the Tournament Center never collapses to TBD.
+    return decorateEvents(fallbackData.events, yearFromSheetName(CURRENT_YEAR_SHEET))
+      .filter(event => event.status !== 'Past');
   });
 
   const redRounds = safeParse('red rounds', fallbackData.redRounds, () => {
@@ -1534,7 +1587,7 @@ async function loadLiveData() {
       players: Boolean(playersText),
       stateTrophies: Boolean(stateTrophiesText),
       thisDay: Boolean(thisDayText),
-      futureEvents: Boolean(futureEventsText)
+      futureEvents: Boolean(futureEventsText) || events.length > 0
     },
     debug: {
       playersTextHead: playersText ? playersText.slice(0, 600) : '',
