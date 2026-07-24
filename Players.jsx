@@ -105,14 +105,8 @@ function drawCardWear(canvas, seed, level) {
   corner(W - 8, H - 8, -1, 0, R(0.5, 0.9) * cs);
   corner(W - 8, H - 8, 0, -1, R(0.5, 0.9) * cs);
 
-  for (let i = 0; i < 4; i++) {
-    const x = R(0, W), y = R(0, H), r = R(80, 150);
-    const g = ctx.createRadialGradient(x, y, 0, x, y, r);
-    g.addColorStop(0, `rgba(120,80,30,${R(0.03, 0.07) + L * 0.03})`);
-    g.addColorStop(1, 'rgba(120,80,30,0)');
-    ctx.fillStyle = g;
-    ctx.beginPath(); ctx.rect(0, 0, W, H); ctx.fill();
-  }
+  // (uniform yellow/brown wash removed — replaced by drawCardFade(), which uses a
+  // saturation-blend canvas so worn patches lose color instead of gaining a brown tint)
 
   function drawCrease(x1, y1, x2, y2, weight, alpha) {
     const steps = 90;
@@ -160,15 +154,52 @@ function drawCardWear(canvas, seed, level) {
   }
 }
 
+// Localized color fading — drawn on its own canvas with mix-blend-mode:saturation,
+// so these patches genuinely desaturate the vivid card colors underneath instead of
+// tinting everything brown the way a plain multiply overlay would.
+function drawCardFade(canvas, seed, level) {
+  if (!canvas) return;
+  const W = 400, H = 630;
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+  const rnd = mulberry32(seed * 7757 + 31337);
+  const R = (a, b) => a + rnd() * (b - a);
+  const spots = Math.round(3 + level * 7);
+  for (let i = 0; i < spots; i++) {
+    let x, y;
+    if (rnd() < 0.65) {
+      const edge = Math.floor(R(0, 4));
+      if (edge === 0) { x = R(0, W); y = R(0, H * 0.25); }
+      else if (edge === 1) { x = R(0, W); y = R(H * 0.75, H); }
+      else if (edge === 2) { x = R(0, W * 0.2); y = R(0, H); }
+      else { x = R(W * 0.8, W); y = R(0, H); }
+    } else { x = R(0, W); y = R(0, H); }
+    const r = R(30, 90);
+    const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+    const strength = R(90, 150);
+    const alpha = R(0.35, 0.7) * (0.5 + level * 0.6);
+    g.addColorStop(0, `rgba(${strength},${strength},${strength},${alpha})`);
+    g.addColorStop(0.6, `rgba(${strength},${strength},${strength},${alpha * 0.5})`);
+    g.addColorStop(1, `rgba(${strength},${strength},${strength},0)`);
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.ellipse(x, y, r, r * R(0.7, 1.1), R(0, Math.PI), 0, Math.PI * 2); ctx.fill();
+  }
+}
+
 function useCardWear(seedBase) {
   const frontRef = useRef(null);
   const backRef = useRef(null);
+  const frontFadeRef = useRef(null);
+  const backFadeRef = useRef(null);
   useEffect(() => {
     const level = wearLevelFor(seedBase);
     drawCardWear(frontRef.current, seedBase, level);
     drawCardWear(backRef.current, seedBase + 7919, level);
+    drawCardFade(frontFadeRef.current, seedBase, level);
+    drawCardFade(backFadeRef.current, seedBase + 7919, level);
   }, [seedBase]);
-  return { frontRef, backRef };
+  return { frontRef, backRef, frontFadeRef, backFadeRef };
 }
 
 function cardEdition(profile) {
@@ -195,7 +226,7 @@ function PlayerTradingCard({ profile }) {
   const accent = cardHighlightColor(profile.cardColor);
   const rankDisplay = profile.rank ? `#${profile.rank}` : `#${cardNo}`;
   const seedBase = hashSeed(profile.name || profile.fullName || cardNo);
-  const { frontRef, backRef } = useCardWear(seedBase);
+  const { frontRef, backRef, frontFadeRef, backFadeRef } = useCardWear(seedBase);
 
   return (
     <button
@@ -230,6 +261,7 @@ function PlayerTradingCard({ profile }) {
               <div><small>Red</small><b>{profile.redRoomCount || 0}</b></div>
             </div>
             <canvas className="dgl84-wear-canvas" ref={frontRef} aria-hidden="true" />
+            <canvas className="dgl84-fade-canvas" ref={frontFadeRef} aria-hidden="true" />
           </div>
         </div>
 
@@ -281,6 +313,7 @@ function PlayerTradingCard({ profile }) {
 
             <div className="dgl84-back-foot"><span>Dojo Golf League</span><span>Est. 2021</span></div>
             <canvas className="dgl84-wear-canvas" ref={backRef} aria-hidden="true" />
+            <canvas className="dgl84-fade-canvas" ref={backFadeRef} aria-hidden="true" />
           </div>
         </div>
       </div>
