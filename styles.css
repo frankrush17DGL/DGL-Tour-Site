@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Anton&display=swap');
 
 :root {
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
@@ -4739,1387 +4740,295 @@ h3 { color: #fff; margin: 16px 0 8px; }
 }
 
 
-/* ===== v84 CLEAN COMPONENT REBUILD: DGL collectible cards + sportsbook ===== */
-.dgl84-card-grid {
-  position: relative !important;
-  z-index: 6 !important;
-  width: min(100%, 1220px) !important;
-  margin: 34px auto 54px !important;
-  padding: 0 18px 36px !important;
-  display: grid !important;
-  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)) !important;
-  gap: 30px !important;
-  align-items: start !important;
+/* ===== v100: Vintage trading card redesign (replaces old dgl84/dgl90/wax80 card CSS) ===== */
+
+.debug-data-panel { display: none !important; }
+
+.players-page.card-gallery-page {
+  min-height: 100vh;
+  background: radial-gradient(circle at 50% -8%, rgba(245,198,86,.18), transparent 34%), linear-gradient(180deg, #100806 0%, #050202 80%);
+}
+.players-page.card-gallery-page .red-page-bg {
+  background-image: linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.88)), url('/red-room-lounge-v4.png'), url('/arizona-sunset-wide.jpg');
+  opacity: .5;
+}
+.players-page.card-gallery-page .red-page-vignette {
+  background: radial-gradient(circle at 50% 4%, rgba(255,221,120,.12), transparent 26%), linear-gradient(90deg, rgba(0,0,0,.86), rgba(0,0,0,.28), rgba(0,0,0,.86));
 }
 
+.dgl84-card-grid {
+  position: relative;
+  z-index: 6;
+  width: min(100%, 720px);
+  margin: 34px auto 52px;
+  padding: 0 16px 36px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 26px;
+  align-items: start;
+}
+
+/* ---------- shared vintage card-stock look ---------- */
+.vcard-font { font-family: 'Anton', 'Oswald', 'Arial Narrow', Arial, sans-serif; text-transform: uppercase; letter-spacing: .01em; }
+
 .dgl84-card {
-  width: min(100%, 430px) !important;
-  justify-self: center !important;
-  aspect-ratio: 2.5 / 3.5 !important;
-  border: 0 !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  background: transparent !important;
-  color: inherit !important;
-  perspective: 1800px !important;
-  -webkit-tap-highlight-color: transparent !important;
-  filter: drop-shadow(0 28px 34px rgba(0,0,0,.54)) !important;
+  all: unset;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  aspect-ratio: 400 / 630;
+  position: relative;
+  perspective: 1400px;
+  -webkit-perspective: 1400px;
+  filter: drop-shadow(0 16px 22px rgba(0,0,0,.55));
 }
 .dgl84-card-rotor {
-  position: relative !important;
-  width: 100% !important;
-  height: 100% !important;
-  transform-style: preserve-3d !important;
-  -webkit-transform-style: preserve-3d !important;
-  transition: transform 1.05s cubic-bezier(.17,.84,.19,1) !important;
+  position: relative;
+  width: 100%; height: 100%;
+  transition: transform .6s cubic-bezier(.4,.2,.2,1);
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
 }
-.dgl84-card.is-flipped .dgl84-card-rotor {
-  transform: rotateY(180deg) !important;
-  -webkit-transform: rotateY(180deg) !important;
-}
+.dgl84-card.is-flipped .dgl84-card-rotor { transform: rotateY(180deg); -webkit-transform: rotateY(180deg); }
+
 .dgl84-card-face {
-  position: absolute !important;
-  inset: 0 !important;
-  overflow: hidden !important;
-  border-radius: 26px !important;
-  backface-visibility: hidden !important;
-  -webkit-backface-visibility: hidden !important;
-  transform-style: preserve-3d !important;
-  -webkit-transform-style: preserve-3d !important;
-  box-shadow: 0 0 0 1px rgba(255,235,178,.35), 0 30px 64px rgba(0,0,0,.55) !important;
+  position: absolute; inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  -webkit-transform: translateZ(0); /* forces its own compositing layer — works around iOS Safari failing to hide the back face without this */
+  border-radius: clamp(10px, 3vw, 20px);
+  overflow: hidden;
+  /* Belt-and-suspenders: some WebKit versions don't honor backface-visibility reliably,
+     letting the reverse face bleed through mirrored. Drive visibility from React state too,
+     timed to swap at the midpoint of the flip so it still reads as one smooth motion. */
+  transition: transform .6s cubic-bezier(.4,.2,.2,1), visibility 0s linear .3s;
+  visibility: visible;
 }
-.dgl84-card-front { transform: rotateY(0deg) translateZ(1px) !important; z-index: 2 !important; }
-.dgl84-card-back { transform: rotateY(180deg) translateZ(1px) !important; z-index: 1 !important; }
-.dgl84-card.is-flipped .dgl84-card-front { pointer-events: none !important; }
+.dgl84-card-back {
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg) translateZ(0);
+  visibility: hidden;
+  transition: transform .6s cubic-bezier(.4,.2,.2,1), visibility 0s linear .3s;
+}
+.dgl84-card.is-flipped .dgl84-card-front { visibility: hidden; }
+.dgl84-card.is-flipped .dgl84-card-back { visibility: visible; }
 
 .dgl84-card-paper,
 .dgl84-back-paper {
-  position: absolute !important;
-  inset: 0 !important;
-  border-radius: 26px !important;
-  border: 10px solid #efe1b7 !important;
-  padding: 18px !important;
+  position: relative;
+  height: 100%;
+  padding: clamp(7px, 1.8vw, 13px);
   background:
-    radial-gradient(circle at 18% 8%, rgba(255,255,255,.26), transparent 16%),
-    linear-gradient(120deg, transparent 0 45%, rgba(255,255,255,.12) 50%, transparent 58% 100%),
-    repeating-linear-gradient(90deg, rgba(255,255,255,.045) 0 2px, rgba(0,0,0,.035) 2px 10px),
-    linear-gradient(180deg, color-mix(in srgb, var(--card-color) 82%, #d6a73b 18%) 0%, var(--card-color) 68%, #3a100b 100%) !important;
+    radial-gradient(circle at 20% 10%, rgba(255,255,255,.35), transparent 40%),
+    linear-gradient(160deg, #f2e2ab 0%, #e8cc7e 55%, #dfb85a 100%);
   box-shadow:
-    inset 0 0 0 3px #22100a,
-    inset 0 0 0 7px #fff1c3,
-    inset 0 0 38px rgba(0,0,0,.28) !important;
+    inset 0 0 0 1px rgba(0,0,0,.55), inset 0 2px 2px rgba(255,255,255,.5),
+    inset 0 0 22px rgba(90,55,15,.14), 0 0 0 2px rgba(20,10,5,.4);
+  display: flex; flex-direction: column;
 }
-.dgl84-card-paper:after,
-.dgl84-back-paper:after {
-  content: '' !important;
-  position: absolute !important;
-  inset: 0 !important;
-  pointer-events: none !important;
-  background:
-    repeating-linear-gradient(0deg, rgba(255,255,255,.04) 0 1px, transparent 1px 5px),
-    radial-gradient(circle at 0 100%, rgba(255,220,109,.16), transparent 24%) !important;
-  mix-blend-mode: screen !important;
-  opacity: .65 !important;
+.dgl84-card-paper:before,
+.dgl84-back-paper:before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background-image: var(--vcard-grain);
+  opacity: .5; mix-blend-mode: multiply;
 }
-.dgl84-card.trophy .dgl84-card-paper { background: linear-gradient(180deg, #78521c, #232323 68%, #0c0705) !important; }
-.dgl84-card.champion .dgl84-card-paper { background: linear-gradient(180deg, #b78a25, #7a1f18 68%, #190804) !important; }
-.dgl84-card.redroom .dgl84-card-paper { background: linear-gradient(180deg, #9e1925, #4b0008 65%, #150405) !important; }
-.dgl84-card.rookie .dgl84-card-paper { background: linear-gradient(180deg, #265b87, #8b1d24 68%, #130707) !important; }
+:root { --vcard-grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.65 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>"); }
 
-.dgl84-top-ribbon {
-  position: relative !important;
-  z-index: 4 !important;
-  height: 34px !important;
-  display: flex !important;
-  justify-content: space-between !important;
-  align-items: center !important;
-  gap: 10px !important;
-  padding: 0 4px !important;
-  color: #fff5cf !important;
-  font-family: Georgia, 'Times New Roman', serif !important;
-  font-weight: 1000 !important;
-  text-transform: uppercase !important;
-  letter-spacing: .13em !important;
-  font-size: 12px !important;
-  text-shadow: 0 2px 1px rgba(0,0,0,.55) !important;
+.dgl84-wear-canvas {
+  position: absolute; inset: 0; z-index: 8; pointer-events: none;
+  width: 100%; height: 100%;
 }
-.dgl84-top-ribbon b {
-  color: #1a0804 !important;
-  background: #fff0bd !important;
-  border: 2px solid #231009 !important;
-  border-radius: 999px !important;
-  padding: 5px 9px !important;
-  font-size: 10px !important;
-  letter-spacing: .06em !important;
-  white-space: nowrap !important;
-  text-shadow: none !important;
+.dgl84-fade-canvas {
+  position: absolute; inset: 0; z-index: 9; pointer-events: none;
+  width: 100%; height: 100%;
+  mix-blend-mode: saturation;
 }
 
+/* ---------- FRONT ---------- */
 .dgl84-photo-box {
-  position: relative !important;
-  z-index: 3 !important;
-  height: 60% !important;
-  border: 6px solid #1f0d06 !important;
-  border-radius: 18px 18px 0 0 !important;
-  overflow: hidden !important;
-  background: #20100b !important;
-  box-shadow: inset 0 0 0 4px #fff0bd, 0 12px 22px rgba(0,0,0,.34) !important;
+  position: relative; z-index: 2; flex: 1 1 auto; min-height: 0;
+  border-radius: clamp(6px, 1.6vw, 10px);
+  border: clamp(3px, .9vw, 5px) solid var(--card-accent, #e8542c);
+  background: #141414; overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.5), inset 0 2px 6px rgba(0,0,0,.5), 0 3px 6px rgba(0,0,0,.4);
 }
 .dgl84-action-photo,
 .dgl84-photo-box .player-photo,
 .dgl84-photo-box .player-photo-fallback {
-  width: 100% !important;
-  height: 100% !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  object-fit: cover !important;
-  object-position: center center !important;
-  box-shadow: none !important;
-  background: radial-gradient(circle at 50% 40%, rgba(255,220,109,.16), #21110b 72%) !important;
+  width: 100%; height: 100%; object-fit: cover;
+  filter: contrast(1.12) saturate(1.35) brightness(1.02) hue-rotate(-4deg);
 }
-.dgl84-photo-box .clown-avatar { font-size: 76px !important; }
-.dgl84-photo-box .clown-avatar small { color: #fff0bd !important; font-size: 13px !important; }
 .dgl84-photo-box:after {
-  content: '' !important;
-  position: absolute !important;
-  inset: 0 !important;
-  background: linear-gradient(180deg, transparent 64%, rgba(0,0,0,.20)), repeating-linear-gradient(0deg, rgba(255,255,255,.04) 0 1px, transparent 1px 4px) !important;
-  pointer-events: none !important;
-  mix-blend-mode: screen !important;
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(200deg, rgba(255,150,40,.14), rgba(20,40,60,.14) 70%);
+  mix-blend-mode: overlay;
 }
 
 .dgl84-dgl-mark {
-  position: absolute !important;
-  left: 15px !important;
-  top: 14px !important;
-  z-index: 6 !important;
-  min-width: 82px !important;
-  padding: 7px 8px 5px !important;
-  border-radius: 10px !important;
-  border: 3px solid #1e0b05 !important;
-  background: linear-gradient(180deg, #ffe47c, #c88721) !important;
-  box-shadow: 0 5px 0 rgba(0,0,0,.25) !important;
-  text-align: center !important;
+  position: absolute; z-index: 5; top: clamp(4px,1.2vw,7px); left: clamp(4px,1.2vw,7px);
+  transform: rotate(-1.4deg);
+  filter: drop-shadow(0 3px 4px rgba(0,0,0,.5));
+  line-height: 1;
 }
 .dgl84-dgl-mark strong {
-  display: block !important;
-  color: #b72e23 !important;
-  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif !important;
-  font-size: 42px !important;
-  line-height: .74 !important;
-  letter-spacing: -.04em !important;
-  text-shadow: 1px 1px 0 #fff0bd, 2px 2px 0 #1e0b05 !important;
+  display: block;
+  background: linear-gradient(180deg,#e8542c,#9c3015); color: #f2e2ab;
+  font-size: clamp(13px, 4.2vw, 22px); letter-spacing: .03em;
+  padding: 3px 10px 1px; border-radius: 4px 4px 0 0; border: 2px solid #231407; border-bottom: 0;
+  text-align: center; font-family: 'Anton','Oswald',sans-serif; text-transform: uppercase;
 }
-.dgl84-dgl-mark span { display: block !important; color: #1e0b05 !important; font-size: 9px !important; font-weight: 1000 !important; }
+.dgl84-dgl-mark span {
+  display: block;
+  background: #f2e2ab; color: #231407;
+  font-size: clamp(6.5px, 1.8vw, 9px); letter-spacing: .05em; font-weight: 700;
+  padding: 2px 8px 3px; border-radius: 0 0 4px 4px; border: 2px solid #231407; border-top: 0;
+  text-align: center; font-family: 'Oswald', sans-serif; text-transform: uppercase;
+}
+
 .dgl84-card-number {
-  position: absolute !important;
-  right: 14px !important;
-  top: 14px !important;
-  z-index: 6 !important;
-  width: 64px !important;
-  height: 64px !important;
-  display: grid !important;
-  place-items: center !important;
-  border-radius: 999px !important;
-  border: 4px solid #b72e23 !important;
-  background: #fff0bd !important;
-  color: #160703 !important;
-  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif !important;
-  font-size: 32px !important;
-  box-shadow: 0 5px 0 rgba(0,0,0,.22) !important;
+  position: absolute; z-index: 5; top: clamp(4px,1.2vw,7px); right: clamp(4px,1.2vw,7px);
+  width: clamp(26px, 7.5vw, 48px); height: clamp(26px, 7.5vw, 48px); border-radius: 50%;
+  background: radial-gradient(circle at 30% 25%, #f4ead0, #f2e2ab 70%); border: clamp(2px,.6vw,3px) solid #231407;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; color: #231407; font-size: clamp(11px, 3vw, 19px);
+  transform: rotate(2deg); font-family: 'Oswald', sans-serif;
+  box-shadow: 0 3px 5px rgba(0,0,0,.45), inset 0 1px 1px rgba(255,255,255,.6);
 }
+
+.dgl84-name-banner {
+  position: relative; z-index: 3; margin-top: clamp(-14px,-3vw,-8px); margin-left: 5px; margin-right: 5px;
+  background: linear-gradient(180deg,#f0e3bd,#f2e2ab); border: clamp(2px,.6vw,3px) solid #231407; border-radius: 999px;
+  padding: clamp(5px,1.4vw,8px) clamp(46px,14vw,66px) clamp(5px,1.4vw,8px) clamp(10px,3vw,15px);
+  box-shadow: 0 5px 9px rgba(0,0,0,.35), inset 0 1px 1px rgba(255,255,255,.6);
+}
+.dgl84-name-banner h2 {
+  margin: 0; font-size: clamp(13px, 4.6vw, 22px); color: #231407; letter-spacing: -.01em;
+  font-family: 'Anton','Oswald',sans-serif; text-transform: uppercase; line-height: 1.05;
+}
+.dgl84-name-banner h2 span { display: inline; margin-right: .25em; }
+.dgl84-name-banner p {
+  margin: 0; font-size: clamp(8px, 2.4vw, 12px); color: var(--card-accent, #c73e1d);
+  letter-spacing: .03em; font-weight: 700; font-family: 'Oswald', sans-serif;
+}
+
 .dgl84-mini-portrait {
-  position: absolute !important;
-  right: 18px !important;
-  bottom: -40px !important;
-  z-index: 7 !important;
-  width: 92px !important;
-  height: 92px !important;
-  padding: 5px !important;
-  border-radius: 999px !important;
-  background: radial-gradient(circle at 26% 20%, #fff8d0, #d8a33b 48%, #82490e 72%, #fff0a2) !important;
-  border: 3px solid #1e0b05 !important;
-  box-shadow: 0 9px 16px rgba(0,0,0,.54) !important;
+  position: absolute; z-index: 4; width: clamp(30px, 9vw, 62px); height: clamp(30px, 9vw, 62px); border-radius: 50%;
+  right: clamp(6px,2vw,12px); top: clamp(-24px,-6vw,-14px);
+  border: clamp(2px,.7vw,4px) solid var(--card-accent, #e8542c); background: #222; overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0,0,0,.5), inset 0 0 0 1px rgba(0,0,0,.4);
 }
 .dgl84-headshot,
 .dgl84-mini-portrait .player-photo,
 .dgl84-mini-portrait .player-photo-fallback {
-  width: 100% !important;
-  height: 100% !important;
-  border-radius: 999px !important;
-  object-fit: cover !important;
-  border: 2px solid #fff0bd !important;
-  box-shadow: none !important;
-}
-
-.dgl84-name-banner {
-  position: relative !important;
-  z-index: 5 !important;
-  min-height: 18% !important;
-  display: flex !important;
-  align-items: center !important;
-  padding: 12px 112px 10px 20px !important;
-  border-left: 6px solid #1f0d06 !important;
-  border-right: 6px solid #1f0d06 !important;
-  border-bottom: 6px solid #1f0d06 !important;
-  border-radius: 0 0 22px 22px !important;
-  background: linear-gradient(180deg, #fff1ae 0%, #e8b43e 52%, #b96d18 100%) !important;
-  box-shadow: inset 0 0 0 3px #fff0bd, inset 0 -5px 0 rgba(80,34,5,.24), 0 4px 12px rgba(0,0,0,.25) !important;
-}
-.dgl84-name-banner h2 {
-  margin: 0 !important;
-  color: #120602 !important;
-  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif !important;
-  font-size: clamp(46px, 9.2vw, 64px) !important;
-  line-height: .80 !important;
-  letter-spacing: -.035em !important;
-  text-transform: uppercase !important;
-  text-shadow: 0 1px 0 rgba(255,255,255,.35) !important;
-}
-.dgl84-name-banner h2 span { display: block !important; }
-.dgl84-name-banner p {
-  margin: 6px 0 0 !important;
-  color: #a92d23 !important;
-  font-family: Georgia, 'Times New Roman', serif !important;
-  font-size: 21px !important;
-  font-weight: 900 !important;
-  line-height: 1 !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
+  width: 100%; height: 100%; object-fit: cover; object-position: center 20%;
+  filter: contrast(1.1) saturate(1.3) brightness(1);
 }
 
 .dgl84-stat-footer {
-  position: relative !important;
-  z-index: 4 !important;
-  height: 10.5% !important;
-  margin-top: 18px !important;
-  display: grid !important;
-  grid-template-columns: repeat(3, 1fr) !important;
-  border: 4px solid #1f0d06 !important;
-  border-radius: 13px !important;
-  overflow: hidden !important;
-  background: #b52f22 !important;
-  box-shadow: inset 0 0 0 2px #fff0bd !important;
+  position: relative; z-index: 2; margin-top: clamp(6px,1.6vw,9px);
+  background: linear-gradient(180deg,#e8542c,#9c3015);
+  border: 2px solid #231407; border-radius: clamp(6px,1.8vw,10px); display: flex; padding: clamp(5px,1.4vw,8px) 4px;
+  box-shadow: 0 3px 6px rgba(0,0,0,.35), inset 0 1px 1px rgba(255,255,255,.25);
 }
-.dgl84-stat-footer div {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  border-right: 2px solid rgba(255,240,189,.44) !important;
+.dgl84-stat-footer div { flex: 1; text-align: center; border-right: 1px solid rgba(0,0,0,.4); padding: 0 2px; }
+.dgl84-stat-footer div:last-child { border-right: 0; }
+.dgl84-stat-footer small {
+  display: block; font-size: clamp(6px, 1.7vw, 8px); font-weight: 700; letter-spacing: .04em;
+  color: rgba(232,217,176,.85); font-family: 'Oswald', sans-serif; text-transform: uppercase;
 }
-.dgl84-stat-footer div:last-child { border-right: 0 !important; }
-.dgl84-stat-footer small { color: #fff0bd !important; font-weight: 1000 !important; text-transform: uppercase !important; letter-spacing: .08em !important; font-size: 11px !important; }
-.dgl84-stat-footer b { color: #ffe28b !important; font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif !important; font-size: 35px !important; line-height: 1 !important; }
+.dgl84-stat-footer b {
+  display: block; font-size: clamp(12px, 3.6vw, 19px); margin-top: 2px; color: #f2e2ab;
+  text-shadow: 0 1px 1px rgba(0,0,0,.4); font-family: 'Anton','Oswald',sans-serif;
+}
 
-.dgl84-back-paper {
-  background:
-    radial-gradient(circle at 20% 8%, rgba(255,255,255,.28), transparent 18%),
-    repeating-linear-gradient(90deg, rgba(113,36,19,.055) 0 1px, transparent 1px 10px),
-    linear-gradient(180deg, #fff0be, #e8c66f) !important;
-  color: #1a0903 !important;
-}
+/* ---------- BACK ---------- */
 .dgl84-back-title {
-  position: relative !important;
-  z-index: 3 !important;
-  display: grid !important;
-  grid-template-columns: 58px 1fr !important;
-  gap: 12px !important;
-  align-items: center !important;
-  padding-bottom: 10px !important;
-  border-bottom: 5px double #742419 !important;
-}
-.dgl84-back-logo {
-  width: 56px !important;
-  height: 56px !important;
-  display: grid !important;
-  place-items: center !important;
-  border: 3px solid #1f0d06 !important;
-  border-radius: 10px !important;
-  background: linear-gradient(180deg, #ffe47c, #c88721) !important;
-  color: #b72e23 !important;
-  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif !important;
-  font-size: 30px !important;
-  text-shadow: 1px 1px 0 #fff0bd !important;
-}
-.dgl84-back-title p { margin: 0 !important; color: #742419 !important; text-transform: uppercase !important; letter-spacing: .12em !important; font-size: 10px !important; font-weight: 1000 !important; }
-.dgl84-back-title h3 { margin: 2px 0 0 !important; color: #1a0903 !important; font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif !important; font-size: 38px !important; line-height: .9 !important; text-transform: uppercase !important; letter-spacing: -.02em !important; }
-.dgl84-back-title span { color: #742419 !important; font-weight: 1000 !important; font-size: 12px !important; }
-.dgl84-back-columns { position: relative !important; z-index: 3 !important; display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 12px !important; margin-top: 12px !important; }
-.dgl84-back-columns section { border: 2px solid rgba(116,36,25,.42) !important; border-radius: 10px !important; background: rgba(255,255,255,.20) !important; padding: 10px !important; }
-.dgl84-back-columns h4,
-.dgl84-scouting h4 { margin: 0 0 8px !important; color: #742419 !important; text-transform: uppercase !important; letter-spacing: .09em !important; font-size: 13px !important; }
-.dgl84-back-columns dl { margin: 0 !important; display: grid !important; gap: 5px !important; }
-.dgl84-back-columns div { display: grid !important; grid-template-columns: .8fr 1fr !important; gap: 6px !important; border-bottom: 1px solid rgba(116,36,25,.20) !important; padding-bottom: 3px !important; }
-.dgl84-back-columns dt { color: #742419 !important; text-transform: uppercase !important; font-size: 9px !important; font-weight: 1000 !important; }
-.dgl84-back-columns dd { margin: 0 !important; color: #1a0903 !important; text-align: right !important; font-size: 10px !important; line-height: 1.1 !important; font-weight: 900 !important; overflow: hidden !important; text-overflow: ellipsis !important; }
-.dgl84-scouting { position: relative !important; z-index: 3 !important; margin-top: 12px !important; padding: 12px !important; border: 2px solid rgba(116,36,25,.42) !important; border-radius: 10px !important; background: rgba(255,255,255,.22) !important; }
-.dgl84-scouting p { margin: 0 !important; color: #1a0903 !important; font-family: Georgia, 'Times New Roman', serif !important; font-size: 13px !important; line-height: 1.25 !important; font-weight: 750 !important; display: -webkit-box !important; -webkit-line-clamp: 5 !important; -webkit-box-orient: vertical !important; overflow: hidden !important; }
-.dgl84-back-foot { position: absolute !important; z-index: 4 !important; left: 28px !important; right: 28px !important; bottom: 22px !important; display: flex !important; justify-content: space-between !important; border-top: 2px solid rgba(116,36,25,.34) !important; padding-top: 8px !important; color: #742419 !important; text-transform: uppercase !important; font-weight: 1000 !important; font-size: 11px !important; letter-spacing: .08em !important; }
-
-/* v84 Sportsbook */
-.dgl84-book-page { position: relative; min-height: 100vh; max-width: 1400px; margin: 0 auto; overflow: hidden; border-radius: 34px; border: 1px solid rgba(255,220,109,.35); background: #070303; box-shadow: var(--shadow); padding-bottom: 42px; }
-.dgl84-book-bg { position: absolute; inset: 0; z-index: 0; background: linear-gradient(180deg, rgba(0,0,0,.24), rgba(0,0,0,.92)), url('/red-room-lounge-v4.png'), url('/scenery/arizona-sunset-wide.jpg'); background-size: cover; background-position: center; opacity: .74; }
-.dgl84-book-page > *:not(.dgl84-book-bg) { position: relative; z-index: 2; }
-.dgl84-back { margin: 18px !important; }
-.dgl84-book-hero { max-width: 1050px; margin: 32px auto 26px; padding: 0 22px; text-align: center; }
-.dgl84-book-hero p { color: var(--gold-bright); text-transform: uppercase; letter-spacing: .28em; font-weight: 1000; font-size: 12px; }
-.dgl84-book-hero h1 { margin: 8px 0; color: #fff; font-size: clamp(56px, 11vw, 128px); letter-spacing: -.09em; }
-.dgl84-book-hero h1 span { color: var(--red); }
-.dgl84-book-hero strong { color: rgba(255,248,232,.85); font-size: clamp(18px, 3vw, 28px); }
-.dgl84-book-topgrid { max-width: 1120px; margin: 0 auto 18px; padding: 0 20px; display: grid; grid-template-columns: .95fr 1.05fr; gap: 16px; }
-.dgl84-favorite-ticket, .dgl84-market-card, .dgl84-odds-board { border: 1px solid rgba(255,220,109,.28); border-radius: 26px; background: rgba(4,0,0,.76); backdrop-filter: blur(10px); box-shadow: 0 22px 56px rgba(0,0,0,.40); }
-.dgl84-favorite-ticket { padding: 28px; text-align: center; background: radial-gradient(circle at 50% 0%, rgba(231,37,57,.22), transparent 34%), rgba(4,0,0,.78); }
-.dgl84-favorite-ticket span { color: var(--gold-bright); text-transform: uppercase; letter-spacing: .14em; font-weight: 1000; font-size: 12px; }
-.dgl84-favorite-ticket h2 { margin: 14px 0 6px; color: #fff; font-size: clamp(34px, 6vw, 64px); }
-.dgl84-favorite-ticket b { display: block; color: var(--red); font-size: clamp(54px, 8vw, 90px); line-height: .9; font-weight: 1000; }
-.dgl84-favorite-ticket small { color: var(--muted); }
-.dgl84-market-card { padding: 18px; display: grid; gap: 10px; }
-.dgl84-market-card div { display: grid; grid-template-columns: 1fr auto; gap: 5px 10px; padding: 14px; border-radius: 16px; background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.08); }
-.dgl84-market-card span { grid-column: 1 / -1; color: var(--gold-bright); font-size: 11px; text-transform: uppercase; letter-spacing: .10em; font-weight: 1000; }
-.dgl84-market-card b { color: #fff; }
-.dgl84-market-card em { color: var(--red); font-style: normal; font-weight: 1000; }
-.dgl84-odds-board { max-width: 1120px; margin: 0 auto; padding: 20px; }
-.dgl84-board-head { display: flex; justify-content: space-between; gap: 14px; align-items: end; border-bottom: 1px solid rgba(255,220,109,.22); padding-bottom: 14px; margin-bottom: 10px; }
-.dgl84-board-head p { margin: 0 0 4px; color: var(--gold-bright); text-transform: uppercase; letter-spacing: .18em; font-weight: 1000; font-size: 11px; }
-.dgl84-board-head h2 { margin: 0; }
-.dgl84-board-head span { color: var(--muted); }
-.dgl84-odds-table { display: grid; gap: 8px; }
-.dgl84-odds-header, .dgl84-odds-row { display: grid; grid-template-columns: 58px 1.2fr .6fr .6fr .65fr 1fr 1.05fr; gap: 10px; align-items: center; }
-.dgl84-odds-header { padding: 8px 12px; color: rgba(255,248,232,.55); text-transform: uppercase; letter-spacing: .12em; font-size: 10px; font-weight: 1000; }
-.dgl84-odds-row { min-height: 64px; padding: 12px; border-radius: 16px; border: 1px solid rgba(255,255,255,.08); background: linear-gradient(90deg, rgba(231,37,57,.08), rgba(255,255,255,.035)); }
-.dgl84-odds-row strong { color: #fff; }
-.dgl84-rank { color: var(--red); font-weight: 1000; }
-.dgl84-odds-price { color: var(--red); font-size: 20px; }
-.dgl84-move-pill, .dgl84-value-pill { display: inline-flex; width: fit-content; max-width: 100%; align-items: center; gap: 4px; padding: 6px 9px; border-radius: 999px; font-size: 12px; font-weight: 1000; white-space: nowrap; }
-.dgl84-move-pill.up { color: #6dff9a; background: rgba(64,255,128,.10); border: 1px solid rgba(64,255,128,.24); }
-.dgl84-move-pill.down { color: #ff7b7b; background: rgba(255,64,64,.10); border: 1px solid rgba(255,64,64,.25); }
-.dgl84-move-pill.flat { color: #d9d2c0; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12); }
-.dgl84-value-pill.strong { color: #ffd76d; background: rgba(255,215,109,.12); border: 1px solid rgba(255,215,109,.28); }
-.dgl84-value-pill.value { color: #6dff9a; background: rgba(64,255,128,.10); border: 1px solid rgba(64,255,128,.24); }
-.dgl84-value-pill.fair { color: #d9d2c0; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12); }
-.dgl84-value-pill.over { color: #ff7b7b; background: rgba(255,64,64,.10); border: 1px solid rgba(255,64,64,.25); }
-
-@media (max-width: 820px) {
-  .dgl84-card-grid { grid-template-columns: 1fr !important; gap: 28px !important; padding: 0 18px 34px !important; margin-top: 24px !important; }
-  .dgl84-card { width: min(100%, 410px) !important; }
-  .dgl84-card-paper, .dgl84-back-paper { border-width: 8px !important; padding: 14px !important; border-radius: 22px !important; }
-  .dgl84-card-face { border-radius: 22px !important; }
-  .dgl84-top-ribbon { height: 28px !important; font-size: 9px !important; }
-  .dgl84-top-ribbon b { font-size: 8px !important; padding: 4px 7px !important; }
-  .dgl84-photo-box { height: 59% !important; border-width: 5px !important; }
-  .dgl84-dgl-mark { min-width: 66px !important; left: 12px !important; top: 12px !important; padding: 5px 6px 4px !important; }
-  .dgl84-dgl-mark strong { font-size: 34px !important; }
-  .dgl84-dgl-mark span { font-size: 7px !important; }
-  .dgl84-card-number { width: 52px !important; height: 52px !important; font-size: 26px !important; right: 12px !important; top: 12px !important; }
-  .dgl84-mini-portrait { width: 78px !important; height: 78px !important; bottom: -33px !important; right: 14px !important; }
-  .dgl84-name-banner { min-height: 18% !important; padding: 10px 94px 8px 16px !important; border-width: 5px !important; }
-  .dgl84-name-banner h2 { font-size: clamp(42px, 15vw, 62px) !important; }
-  .dgl84-name-banner p { font-size: 18px !important; }
-  .dgl84-stat-footer { height: 10% !important; margin-top: 14px !important; }
-  .dgl84-stat-footer small { font-size: 9px !important; }
-  .dgl84-stat-footer b { font-size: 30px !important; }
-  .dgl84-back-title { grid-template-columns: 48px 1fr !important; gap: 9px !important; }
-  .dgl84-back-logo { width: 46px !important; height: 46px !important; font-size: 25px !important; }
-  .dgl84-back-title h3 { font-size: 30px !important; }
-  .dgl84-back-columns { gap: 8px !important; }
-  .dgl84-back-columns section { padding: 8px !important; }
-  .dgl84-back-columns dt { font-size: 8px !important; }
-  .dgl84-back-columns dd { font-size: 9px !important; }
-  .dgl84-scouting p { font-size: 11px !important; -webkit-line-clamp: 4 !important; }
-  .dgl84-back-foot { left: 22px !important; right: 22px !important; bottom: 18px !important; font-size: 9px !important; }
-  .dgl84-book-topgrid { grid-template-columns: 1fr !important; padding: 0 12px !important; }
-  .dgl84-odds-board { margin: 0 12px !important; padding: 14px !important; }
-  .dgl84-odds-header { display: none !important; }
-  .dgl84-odds-row { grid-template-columns: 44px 1fr auto !important; gap: 7px !important; align-items: start !important; }
-  .dgl84-odds-row > span:nth-child(3), .dgl84-odds-row > span:nth-child(4) { display: none !important; }
-  .dgl84-odds-price { grid-column: 3; grid-row: 1; }
-  .dgl84-move-pill { grid-column: 2 / 4; grid-row: 2; }
-  .dgl84-value-pill { grid-column: 2 / 4; grid-row: 3; }
-}
-
-/* ===== v85 front card cleanup: smaller name block + no clipped stat strip ===== */
-.dgl84-name-banner {
-  min-height: 13.5% !important;
-  padding: 8px 112px 7px 14px !important;
-  border-width: 5px !important;
-  border-radius: 0 0 14px 14px !important;
-  align-items: center !important;
-}
-
-.dgl84-name-banner h2 {
-  font-size: clamp(28px, 7.6vw, 46px) !important;
-  line-height: .82 !important;
-  letter-spacing: -.03em !important;
-}
-
-.dgl84-name-banner p {
-  font-size: clamp(12px, 3vw, 19px) !important;
-  line-height: 1 !important;
-  margin-top: 3px !important;
-}
-
-.dgl84-mini-portrait {
-  width: 68px !important;
-  height: 68px !important;
-  right: 17px !important;
-  bottom: -24px !important;
-  z-index: 12 !important;
-}
-
-.dgl84-photo-box {
-  height: 64% !important;
-}
-
-/* The bottom stat strip was getting clipped on mobile. Remove it from the front.
-   The full stat table remains on the card back. */
-.dgl84-stat-footer {
-  display: none !important;
-}
-
-/* Restore breathing room at the bottom now that the front stats are removed. */
-.dgl84-card-paper {
-  display: flex !important;
-  flex-direction: column !important;
-}
-
-.dgl84-name-banner {
-  margin-top: 0 !important;
-}
-
-@media (max-width: 820px) {
-  .dgl84-card-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 14px !important;
-    padding: 0 10px 34px !important;
-  }
-
-  .dgl84-card {
-    width: 100% !important;
-  }
-
-  .dgl84-photo-box {
-    height: 65% !important;
-  }
-
-  .dgl84-name-banner {
-    min-height: 13% !important;
-    padding: 7px 68px 6px 9px !important;
-    border-width: 4px !important;
-  }
-
-  .dgl84-name-banner h2 {
-    font-size: clamp(25px, 8.7vw, 34px) !important;
-    line-height: .80 !important;
-  }
-
-  .dgl84-name-banner p {
-    font-size: clamp(10px, 3.3vw, 14px) !important;
-  }
-
-  .dgl84-mini-portrait {
-    width: 49px !important;
-    height: 49px !important;
-    right: 9px !important;
-    bottom: -17px !important;
-  }
-
-  .dgl84-card-number {
-    width: 42px !important;
-    height: 42px !important;
-    font-size: 22px !important;
-  }
-}
-
-
-/* ===== v86 execution: larger overlapping headshot, dominant photo, cleaner wax-pack front ===== */
-.dgl84-card-grid {
-  gap: 18px !important;
-}
-
-.dgl84-card {
-  filter: drop-shadow(0 24px 30px rgba(0,0,0,.55)) !important;
-}
-
-.dgl84-card-paper {
-  padding: 16px !important;
-  background:
-    radial-gradient(circle at 22% 8%, rgba(255,255,255,.20), transparent 15%),
-    linear-gradient(112deg, transparent 0 46%, rgba(255,255,255,.14) 50%, transparent 58% 100%),
-    repeating-linear-gradient(90deg, rgba(255,255,255,.040) 0 1px, rgba(0,0,0,.035) 1px 8px),
-    linear-gradient(180deg, color-mix(in srgb, var(--card-color) 82%, #d6a73b 18%) 0%, var(--card-color) 76%, #1c0705 100%) !important;
-  box-shadow:
-    inset 0 0 0 3px #21100a,
-    inset 0 0 0 7px #fff2c4,
-    inset 0 0 0 11px rgba(0,0,0,.18),
-    inset 0 0 34px rgba(0,0,0,.26) !important;
-}
-
-.dgl84-card.champion .dgl84-card-paper {
-  background:
-    radial-gradient(circle at 22% 8%, rgba(255,255,255,.22), transparent 15%),
-    linear-gradient(112deg, transparent 0 46%, rgba(255,255,255,.15) 50%, transparent 58% 100%),
-    repeating-linear-gradient(90deg, rgba(255,255,255,.042) 0 1px, rgba(0,0,0,.035) 1px 8px),
-    linear-gradient(180deg, #c99a2c 0%, #9b741f 16%, #6e1714 76%, #170705 100%) !important;
-}
-.dgl84-card.redroom .dgl84-card-paper {
-  background:
-    radial-gradient(circle at 22% 8%, rgba(255,255,255,.18), transparent 15%),
-    linear-gradient(112deg, transparent 0 46%, rgba(255,255,255,.12) 50%, transparent 58% 100%),
-    repeating-linear-gradient(90deg, rgba(255,255,255,.04) 0 1px, rgba(0,0,0,.035) 1px 8px),
-    linear-gradient(180deg, #b7192c 0%, #861420 24%, #3a0308 100%) !important;
-}
-.dgl84-card.rookie .dgl84-card-paper {
-  background:
-    radial-gradient(circle at 22% 8%, rgba(255,255,255,.20), transparent 15%),
-    linear-gradient(112deg, transparent 0 46%, rgba(255,255,255,.13) 50%, transparent 58% 100%),
-    repeating-linear-gradient(90deg, rgba(255,255,255,.04) 0 1px, rgba(0,0,0,.035) 1px 8px),
-    linear-gradient(180deg, #2b6798 0%, #214c75 22%, #731824 78%, #160606 100%) !important;
-}
-
-.dgl84-card-paper:before {
-  content: '' !important;
-  position: absolute !important;
-  inset: 10px !important;
-  border-radius: 17px !important;
-  pointer-events: none !important;
-  box-shadow:
-    inset 0 0 0 1px rgba(255,246,205,.50),
-    inset 0 0 18px rgba(255,246,205,.05) !important;
-  z-index: 1 !important;
-}
-
-.dgl84-top-ribbon {
-  height: 28px !important;
-  padding: 0 4px !important;
-  font-size: 10px !important;
-  letter-spacing: .16em !important;
-}
-.dgl84-top-ribbon b {
-  padding: 4px 8px !important;
-  font-size: 8px !important;
-  border-width: 1px !important;
-  box-shadow: inset 0 -2px 0 rgba(0,0,0,.14) !important;
-}
-
-.dgl84-photo-box {
-  height: 69.5% !important;
-  border-width: 6px !important;
-  border-radius: 16px 16px 0 0 !important;
-  box-shadow:
-    inset 0 0 0 4px #fff2c4,
-    inset 0 0 0 6px rgba(0,0,0,.18),
-    0 12px 22px rgba(0,0,0,.36) !important;
-}
-
-.dgl84-dgl-mark {
-  min-width: 74px !important;
-  padding: 6px 7px 4px !important;
-  border-radius: 9px !important;
-}
-.dgl84-dgl-mark strong { font-size: 36px !important; }
-.dgl84-dgl-mark span { font-size: 8px !important; }
-
-.dgl84-card-number {
-  width: 58px !important;
-  height: 58px !important;
-  font-size: 30px !important;
-  background:
-    radial-gradient(circle at 30% 20%, #fff8d4, #f5d66b 48%, #b97518 100%) !important;
-  border-color: #fff2c4 !important;
-  box-shadow: 0 0 0 3px #8b1b18, 0 6px 0 rgba(0,0,0,.18), inset 0 2px 0 rgba(255,255,255,.50) !important;
-}
-
-.dgl84-name-banner {
-  min-height: 15.25% !important;
-  margin-top: 0 !important;
-  padding: 8px 118px 7px 16px !important;
-  border-left-width: 6px !important;
-  border-right-width: 6px !important;
-  border-bottom-width: 6px !important;
-  border-radius: 0 0 18px 18px !important;
-  background:
-    radial-gradient(circle at 70% 0%, rgba(255,255,255,.42), transparent 27%),
-    linear-gradient(180deg, #fff3b4 0%, #edc34c 48%, #bf7418 100%) !important;
-}
-.dgl84-name-banner:before {
-  content: '' !important;
-  position: absolute !important;
-  left: 0 !important;
-  right: 0 !important;
-  top: 0 !important;
-  height: 7px !important;
-  background: rgba(112,20,22,.88) !important;
-  box-shadow: 0 1px 0 rgba(255,255,255,.30) !important;
-}
-.dgl84-name-banner h2 {
-  font-size: clamp(31px, 7.1vw, 48px) !important;
-  line-height: .78 !important;
-  letter-spacing: -.028em !important;
-}
-.dgl84-name-banner p {
-  color: #8c221b !important;
-  font-size: clamp(10px, 2.55vw, 16px) !important;
-  margin-top: 3px !important;
-  text-align: left !important;
-  letter-spacing: .03em !important;
-}
-
-/* Headshot now intentionally overlaps the photo AND nameplate. */
-.dgl84-mini-portrait {
-  width: 98px !important;
-  height: 98px !important;
-  right: 18px !important;
-  bottom: -49px !important;
-  z-index: 20 !important;
-  padding: 6px !important;
-  border-width: 3px !important;
-  background:
-    radial-gradient(circle at 28% 18%, #fff9d3, #f1d26a 32%, #c88922 54%, #76400b 74%, #fff0a2 100%) !important;
-  box-shadow:
-    0 11px 18px rgba(0,0,0,.58),
-    0 0 0 3px rgba(255,242,196,.72),
-    inset 0 0 0 1px rgba(255,255,255,.55) !important;
-}
-.dgl84-headshot,
-.dgl84-mini-portrait .player-photo,
-.dgl84-mini-portrait .player-photo-fallback {
-  border-width: 2px !important;
-  object-position: center center !important;
-}
-
-.dgl84-stat-footer { display: none !important; }
-
-/* Card backs stay information-heavy but more print-card, less web dashboard. */
-.dgl84-back-paper {
-  padding: 17px !important;
-  background:
-    radial-gradient(circle at 18% 8%, rgba(255,255,255,.28), transparent 16%),
-    repeating-linear-gradient(90deg, rgba(113,36,19,.055) 0 1px, transparent 1px 9px),
-    linear-gradient(180deg, #fff0be, #e5c16d) !important;
-}
-.dgl84-back-columns section,
-.dgl84-scouting {
-  background: rgba(255,255,255,.22) !important;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.16) !important;
-}
-
-@media (max-width: 820px) {
-  .dgl84-card-grid {
-    gap: 12px !important;
-    padding: 0 10px 34px !important;
-  }
-  .dgl84-card-paper,
-  .dgl84-back-paper {
-    border-width: 6px !important;
-    padding: 9px !important;
-    border-radius: 17px !important;
-    box-shadow:
-      inset 0 0 0 2px #21100a,
-      inset 0 0 0 4px #fff2c4,
-      inset 0 0 22px rgba(0,0,0,.26) !important;
-  }
-  .dgl84-card-face { border-radius: 17px !important; }
-  .dgl84-top-ribbon {
-    height: 20px !important;
-    font-size: 6.2px !important;
-    letter-spacing: .12em !important;
-    gap: 3px !important;
-  }
-  .dgl84-top-ribbon b { font-size: 5.4px !important; padding: 2px 4px !important; }
-  .dgl84-photo-box {
-    height: 70% !important;
-    border-width: 4px !important;
-    border-radius: 10px 10px 0 0 !important;
-    box-shadow: inset 0 0 0 2px #fff2c4, inset 0 0 0 4px rgba(0,0,0,.18), 0 7px 12px rgba(0,0,0,.34) !important;
-  }
-  .dgl84-dgl-mark {
-    left: 8px !important;
-    top: 8px !important;
-    min-width: 44px !important;
-    padding: 4px 4px 3px !important;
-    border-width: 2px !important;
-    border-radius: 6px !important;
-  }
-  .dgl84-dgl-mark strong { font-size: 21px !important; }
-  .dgl84-dgl-mark span { font-size: 5px !important; }
-  .dgl84-card-number {
-    right: 8px !important;
-    top: 8px !important;
-    width: 38px !important;
-    height: 38px !important;
-    font-size: 20px !important;
-    border-width: 2px !important;
-    box-shadow: 0 0 0 2px #8b1b18, 0 4px 0 rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.50) !important;
-  }
-  .dgl84-name-banner {
-    min-height: 14.5% !important;
-    padding: 5px 58px 5px 8px !important;
-    border-left-width: 4px !important;
-    border-right-width: 4px !important;
-    border-bottom-width: 4px !important;
-    border-radius: 0 0 10px 10px !important;
-  }
-  .dgl84-name-banner:before { height: 4px !important; }
-  .dgl84-name-banner h2 {
-    font-size: clamp(18px, 6.8vw, 28px) !important;
-    line-height: .80 !important;
-  }
-  .dgl84-name-banner p {
-    font-size: clamp(7px, 2.55vw, 10px) !important;
-    margin-top: 1px !important;
-  }
-  .dgl84-mini-portrait {
-    width: 56px !important;
-    height: 56px !important;
-    right: 8px !important;
-    bottom: -28px !important;
-    padding: 3px !important;
-    border-width: 2px !important;
-    box-shadow: 0 7px 11px rgba(0,0,0,.58), 0 0 0 2px rgba(255,242,196,.72) !important;
-  }
-  .dgl84-headshot,
-  .dgl84-mini-portrait .player-photo,
-  .dgl84-mini-portrait .player-photo-fallback { border-width: 1px !important; }
-
-  .dgl84-back-title h3 { font-size: 19px !important; }
-  .dgl84-back-columns { gap: 5px !important; }
-  .dgl84-back-columns section { padding: 5px !important; }
-  .dgl84-back-columns dt,
-  .dgl84-back-columns dd { font-size: 5.8px !important; }
-  .dgl84-scouting p { font-size: 6.2px !important; }
-}
-
-/* ===== v87: Put the headshot IN FRONT of the name banner =====
-   Goal: the gold name banner sits behind the portrait medallion instead of covering/competing with it. */
-.dgl84-photo-box {
-  overflow: visible !important;
-  z-index: 30 !important;
-  position: relative !important;
-}
-
-.dgl84-photo-box > .player-photo,
-.dgl84-photo-box > .player-photo-fallback,
-.dgl84-action-photo {
-  border-radius: 10px 10px 0 0 !important;
-  clip-path: inset(0 round 10px 10px 0 0) !important;
-}
-
-.dgl84-name-banner {
-  z-index: 8 !important;
-  position: relative !important;
-  padding-right: 136px !important;
-}
-
-.dgl84-mini-portrait {
-  z-index: 80 !important;
-  width: 116px !important;
-  height: 116px !important;
-  right: 13px !important;
-  bottom: -67px !important;
-  padding: 7px !important;
-  border-width: 4px !important;
-  pointer-events: none !important;
-  box-shadow:
-    0 14px 22px rgba(0,0,0,.62),
-    0 0 0 4px rgba(255,242,196,.75),
-    inset 0 0 0 1px rgba(255,255,255,.60) !important;
-}
-
-.dgl84-headshot,
-.dgl84-mini-portrait .player-photo,
-.dgl84-mini-portrait .player-photo-fallback {
-  border-width: 3px !important;
-}
-
-/* Make the banner feel intentionally tucked underneath the headshot. */
-.dgl84-name-banner:after {
-  content: '' !important;
-  position: absolute !important;
-  right: 13px !important;
-  top: 50% !important;
-  transform: translateY(-50%) !important;
-  width: 112px !important;
-  height: 112px !important;
-  border-radius: 999px !important;
-  background: radial-gradient(circle, rgba(0,0,0,.20), transparent 64%) !important;
-  z-index: -1 !important;
-  pointer-events: none !important;
-}
-
-@media (max-width: 820px) {
-  .dgl84-photo-box {
-    overflow: visible !important;
-    z-index: 30 !important;
-  }
-
-  .dgl84-name-banner {
-    z-index: 8 !important;
-    padding-right: 76px !important;
-  }
-
-  .dgl84-mini-portrait {
-    width: 68px !important;
-    height: 68px !important;
-    right: 6px !important;
-    bottom: -41px !important;
-    padding: 4px !important;
-    border-width: 2px !important;
-    z-index: 80 !important;
-  }
-
-  .dgl84-headshot,
-  .dgl84-mini-portrait .player-photo,
-  .dgl84-mini-portrait .player-photo-fallback {
-    border-width: 2px !important;
-  }
-
-  .dgl84-name-banner:after {
-    right: 4px !important;
-    width: 68px !important;
-    height: 68px !important;
-  }
-}
-
-/* ===== v90 COMPLETE ART DIRECTION RESET: DGL wax-pack cards + sportsbook polish ===== */
-.debug-data-panel{display:none!important;}
-.players-page.card-gallery-page{min-height:100vh!important;background:radial-gradient(circle at 50% -8%,rgba(245,198,86,.18),transparent 34%),linear-gradient(180deg,#100806 0%,#050202 80%)!important;}
-.players-page .red-page-bg{background-image:linear-gradient(180deg,rgba(0,0,0,.22),rgba(0,0,0,.88)),url('/red-room-lounge-v4.png'),url('/scenery/arizona-sunset-wide.jpg')!important;opacity:.56!important;}
-.players-page .red-page-vignette{background:radial-gradient(circle at 50% 4%,rgba(255,221,120,.12),transparent 26%),linear-gradient(90deg,rgba(0,0,0,.86),rgba(0,0,0,.28),rgba(0,0,0,.86))!important;}
-.players-card-set-title{display:none!important;}
-.dgl84-card-grid{position:relative!important;z-index:6!important;width:min(100%,1180px)!important;margin:34px auto 52px!important;padding:0 16px 36px!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:24px!important;align-items:start!important;}
-@media(min-width:1120px){.dgl84-card-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;max-width:1280px!important;}}
-
-.dgl90-card{display:block!important;width:100%!important;aspect-ratio:2.5/3.55!important;border:0!important;padding:0!important;margin:0!important;background:transparent!important;color:inherit!important;text-align:left!important;perspective:1800px!important;-webkit-tap-highlight-color:transparent!important;filter:drop-shadow(0 28px 34px rgba(0,0,0,.48))!important;}
-.dgl90-rotor{position:relative!important;width:100%!important;height:100%!important;transform-style:preserve-3d!important;-webkit-transform-style:preserve-3d!important;transition:transform 1.35s cubic-bezier(.18,.82,.18,1)!important;}
-.dgl90-card.is-flipped .dgl90-rotor{transform:rotateY(180deg)!important;-webkit-transform:rotateY(180deg)!important;}
-.dgl90-face{position:absolute!important;inset:0!important;overflow:hidden!important;border-radius:28px!important;backface-visibility:hidden!important;-webkit-backface-visibility:hidden!important;box-shadow:0 0 0 1px rgba(255,239,193,.24),0 30px 62px rgba(0,0,0,.55)!important;}
-.dgl90-front{z-index:2!important;transform:rotateY(0deg) translateZ(1px)!important;-webkit-transform:rotateY(0deg) translateZ(1px)!important;}
-.dgl90-back{z-index:1!important;transform:rotateY(180deg) translateZ(1px)!important;-webkit-transform:rotateY(180deg) translateZ(1px)!important;}
-.dgl90-card.is-flipped .dgl90-front{pointer-events:none!important;}
-
-.dgl90-front-stock,.dgl90-back-stock{position:absolute!important;inset:0!important;border-radius:28px!important;padding:5.2%!important;border:10px solid #ead9a8!important;background:radial-gradient(circle at 18% 7%,rgba(255,255,255,.28),transparent 15%),repeating-linear-gradient(90deg,rgba(255,255,255,.04) 0 2px,rgba(0,0,0,.035) 2px 9px),linear-gradient(180deg,color-mix(in srgb,var(--card-color) 92%,#fff 4%),color-mix(in srgb,var(--card-color) 75%,#000 18%))!important;box-shadow:inset 0 0 0 3px rgba(76,34,12,.62),inset 0 0 0 8px #fff1c6,inset 0 0 38px rgba(0,0,0,.25)!important;}
-.dgl90-front-stock:before,.dgl90-back-stock:before{content:""!important;position:absolute!important;inset:0!important;pointer-events:none!important;background:linear-gradient(115deg,transparent 0 42%,rgba(255,255,255,.16) 50%,transparent 58% 100%),radial-gradient(circle at 6% 94%,rgba(255,255,255,.18),transparent 24%),repeating-linear-gradient(0deg,rgba(255,255,255,.04) 0 1px,transparent 1px 5px)!important;mix-blend-mode:screen!important;opacity:.75!important;}
-.dgl90-front-stock:after,.dgl90-back-stock:after{content:""!important;position:absolute!important;inset:0!important;pointer-events:none!important;background:radial-gradient(circle at 0 0,rgba(0,0,0,.14),transparent 20%),radial-gradient(circle at 100% 100%,rgba(0,0,0,.16),transparent 22%)!important;}
-.dgl90-card.champion .dgl90-front-stock{background:radial-gradient(circle at 20% 7%,rgba(255,255,255,.30),transparent 15%),repeating-linear-gradient(90deg,rgba(255,255,255,.05) 0 2px,rgba(0,0,0,.035) 2px 9px),linear-gradient(180deg,#c19325,#8b520d 62%,#351507)!important;}
-.dgl90-card.redroom .dgl90-front-stock{background:radial-gradient(circle at 20% 7%,rgba(255,255,255,.24),transparent 15%),repeating-linear-gradient(90deg,rgba(255,255,255,.045) 0 2px,rgba(0,0,0,.035) 2px 9px),linear-gradient(180deg,#b31628,#620815 64%,#250206)!important;}
-.dgl90-card.rookie .dgl90-front-stock{background:radial-gradient(circle at 20% 7%,rgba(255,255,255,.26),transparent 15%),repeating-linear-gradient(90deg,rgba(255,255,255,.045) 0 2px,rgba(0,0,0,.035) 2px 9px),linear-gradient(180deg,#2873a9,#0c3f67 64%,#041725)!important;}
-.dgl90-card.trophy .dgl90-front-stock{background:radial-gradient(circle at 20% 7%,rgba(255,255,255,.30),transparent 15%),repeating-linear-gradient(90deg,rgba(255,255,255,.05) 0 2px,rgba(0,0,0,.035) 2px 9px),linear-gradient(180deg,#12713f,#08351f 64%,#03170d)!important;}
-
-.dgl90-topline{position:relative!important;z-index:5!important;height:7.2%!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;padding:0 2px!important;color:#fff7d7!important;font-family:Georgia,'Times New Roman',serif!important;font-size:clamp(7px,1.75vw,13px)!important;font-weight:900!important;letter-spacing:.08em!important;text-transform:uppercase!important;text-shadow:0 2px 1px rgba(0,0,0,.55)!important;}
-.dgl90-topline b{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-width:0!important;max-width:46%!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;padding:3px 8px!important;border-radius:999px!important;background:#fff3c4!important;color:#241007!important;text-shadow:none!important;border:1px solid rgba(0,0,0,.32)!important;box-shadow:inset 0 -2px 0 rgba(0,0,0,.12)!important;font-size:.82em!important;}
-.dgl90-photo-frame{position:relative!important;z-index:3!important;height:67%!important;margin:1.4% 1px 0!important;border:6px solid #fff2c8!important;border-bottom-width:5px!important;border-radius:12px 12px 0 0!important;overflow:hidden!important;background:#20100b!important;box-shadow:inset 0 0 0 2px rgba(31,13,4,.58),0 10px 19px rgba(0,0,0,.36)!important;}
-.dgl90-action-photo,.dgl90-photo-frame .player-photo,.dgl90-photo-frame .player-photo-fallback{width:100%!important;height:100%!important;border:0!important;border-radius:0!important;object-fit:cover!important;object-position:center center!important;box-shadow:none!important;background:radial-gradient(circle at 50% 42%,rgba(225,174,61,.18),#21110b 70%)!important;}
-.dgl90-photo-frame .clown-avatar{font-size:clamp(38px,11vw,86px)!important;}
-.dgl90-photo-frame .clown-avatar small{color:#fff2c8!important;font-size:11px!important;}
-.dgl90-photo-grain{position:absolute!important;inset:0!important;z-index:3!important;pointer-events:none!important;background:linear-gradient(180deg,transparent 64%,rgba(0,0,0,.25)),repeating-linear-gradient(0deg,rgba(255,255,255,.045) 0 1px,transparent 1px 4px)!important;mix-blend-mode:screen!important;}
-.dgl90-logo-stamp{position:absolute!important;left:4.7%!important;top:4.6%!important;z-index:5!important;min-width:28%!important;aspect-ratio:1.55/1!important;padding:4px!important;display:grid!important;place-items:center!important;border:3px solid #1e0a05!important;border-radius:10px!important;background:linear-gradient(180deg,#ffd765,#d99625)!important;color:#b72d22!important;box-shadow:0 5px 0 rgba(0,0,0,.25)!important;}
-.dgl90-logo-stamp img{display:none!important;}
-.dgl90-logo-stamp strong{font-family:Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif!important;color:#b72d22!important;font-size:clamp(24px,8.5vw,46px)!important;line-height:.78!important;text-shadow:1px 1px 0 #f7e7b6,2px 2px 0 #1e0a05!important;}
-.dgl90-logo-stamp span{color:#1e0a05!important;font-size:clamp(6px,2.1vw,10px)!important;line-height:1!important;font-weight:1000!important;margin-top:-3px!important;}
-.dgl90-number-medallion{position:absolute!important;right:4.7%!important;top:4.7%!important;z-index:6!important;width:18%!important;aspect-ratio:1!important;display:grid!important;place-items:center!important;border-radius:999px!important;border:4px solid #b72d22!important;background:#f7e7b6!important;color:#1c0804!important;font-family:Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif!important;font-size:clamp(18px,5.5vw,42px)!important;line-height:1!important;box-shadow:0 4px 0 rgba(0,0,0,.22),inset 0 2px 0 rgba(255,255,255,.54)!important;}
-.dgl90-nameplate{position:relative!important;z-index:5!important;min-height:16%!important;margin:0 1px!important;padding:8px 29% 7px 6%!important;display:flex!important;align-items:center!important;border-left:6px solid #fff2c8!important;border-right:6px solid #fff2c8!important;border-bottom:5px solid #fff2c8!important;border-radius:0 0 22px 22px!important;background:radial-gradient(circle at 82% 0%,rgba(255,255,255,.38),transparent 30%),linear-gradient(180deg,#ffe58b 0%,#e6ad36 55%,#bf7219 100%)!important;box-shadow:inset 0 2px 0 rgba(255,255,255,.48),inset 0 -4px 0 rgba(86,39,5,.26),0 4px 10px rgba(0,0,0,.24)!important;}
-.dgl90-nameplate:before{content:""!important;position:absolute!important;left:0!important;right:0!important;top:0!important;height:7px!important;background:color-mix(in srgb,var(--card-color) 84%,#000 10%)!important;border-bottom:1px solid rgba(255,255,255,.34)!important;}
-.dgl90-name-copy{min-width:0!important;width:100%!important;position:relative!important;z-index:2!important;}
-.dgl90-name-copy h2{color:#130602!important;font-family:Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif!important;margin:0!important;font-size:clamp(26px,7.4vw,56px)!important;line-height:.82!important;letter-spacing:-.025em!important;text-transform:uppercase!important;text-shadow:0 1px 0 rgba(255,255,255,.28)!important;white-space:normal!important;word-break:normal!important;overflow-wrap:normal!important;}
-.dgl90-name-copy h2 span{display:block!important;}
-.dgl90-name-copy p{margin:5px 0 0!important;color:#b33325!important;font-family:Georgia,'Times New Roman',serif!important;font-size:clamp(10px,2.8vw,21px)!important;line-height:1!important;font-weight:900!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
-.dgl90-headshot-ring{position:absolute!important;right:6.8%!important;top:66.5%!important;z-index:9!important;width:25%!important;aspect-ratio:1!important;border-radius:999px!important;padding:4px!important;background:radial-gradient(circle at 26% 20%,#fff8d0,#d8a33b 48%,#8b4b0e 72%,#fff0a2)!important;border:3px solid #1e0a05!important;box-shadow:0 9px 16px rgba(0,0,0,.50),inset 0 0 0 1px rgba(255,255,255,.48)!important;}
-.dgl90-headshot,.dgl90-headshot-ring .player-photo,.dgl90-headshot-ring .player-photo-fallback{width:100%!important;height:100%!important;border-radius:999px!important;object-fit:cover!important;object-position:center center!important;border:2px solid #f8eabf!important;box-shadow:none!important;background:#26120c!important;}
-.dgl90-front-footer{position:relative!important;z-index:5!important;margin-top:4.3%!important;height:7.2%!important;border-radius:5px!important;background:#375a34!important;color:#f8eabf!important;border:2px solid #f8eabf!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;padding:0 9px!important;font-family:Georgia,'Times New Roman',serif!important;font-size:clamp(8px,2.2vw,14px)!important;letter-spacing:.09em!important;font-weight:900!important;text-transform:uppercase!important;white-space:nowrap!important;overflow:hidden!important;}
-.dgl90-card.redroom .dgl90-front-footer{background:#6d101b!important;}.dgl90-card.rookie .dgl90-front-footer{background:#174a73!important;}.dgl90-card.champion .dgl90-front-footer{background:#6c4b0b!important;}.dgl90-card.trophy .dgl90-front-footer{background:#24552f!important;}
-
-.dgl90-back-stock{background:repeating-linear-gradient(90deg,rgba(110,39,25,.045) 0 1px,transparent 1px 12px),linear-gradient(180deg,#fff1bf,#e8c66f)!important;color:#1a0903!important;box-shadow:inset 0 0 0 3px #6b2318,inset 0 0 0 8px #fff1c6,inset 0 0 28px rgba(0,0,0,.12)!important;}
-.dgl90-back-header{position:relative!important;z-index:3!important;display:grid!important;grid-template-columns:45px 1fr auto!important;gap:8px!important;align-items:center!important;border-bottom:4px double #6b2318!important;padding:4px 0 7px!important;margin:0 0 6px!important;}
-.dgl90-back-logo{width:42px!important;height:42px!important;border:2px solid #6b2318!important;border-radius:8px!important;background:linear-gradient(180deg,#d9272f,#7d121b)!important;color:#fff1bf!important;display:grid!important;place-items:center!important;box-shadow:inset 0 0 0 2px #fff1bf!important;}
-.dgl90-back-logo strong{font-family:Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif!important;font-size:20px!important;line-height:.8!important;}.dgl90-back-logo span{font-size:6px!important;font-weight:1000!important;margin-top:-6px!important;}
-.dgl90-back-header p{margin:0!important;color:#6b2318!important;text-transform:uppercase!important;letter-spacing:.08em!important;font-size:clamp(7px,1.3vw,12px)!important;font-weight:1000!important;}
-.dgl90-back-header h3{margin:2px 0 0!important;color:#1a0903!important;font-family:Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif!important;font-size:clamp(18px,3.4vw,36px)!important;line-height:.88!important;text-transform:uppercase!important;letter-spacing:-.025em!important;}
-.dgl90-back-header span{display:block!important;margin-top:2px!important;color:#6b2318!important;font-size:clamp(7px,1.3vw,12px)!important;line-height:1!important;font-weight:900!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}.dgl90-back-header>b{color:#6b2318!important;font-size:clamp(16px,3vw,28px)!important;font-family:Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif!important;}
-.dgl90-back-idline{position:relative!important;z-index:3!important;display:grid!important;grid-template-columns:repeat(3,1fr)!important;background:#6b2318!important;color:#fff1bf!important;margin-bottom:7px!important;border-radius:4px!important;overflow:hidden!important;}
-.dgl90-back-idline span{text-align:center!important;padding:5px 3px!important;font-size:clamp(6px,1.3vw,10px)!important;text-transform:uppercase!important;font-weight:900!important;letter-spacing:.05em!important;border-right:1px solid rgba(255,241,191,.35)!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}.dgl90-back-idline span:last-child{border-right:0!important;}
-.dgl90-back-columns{position:relative!important;z-index:3!important;display:grid!important;grid-template-columns:1fr 1fr!important;gap:7px!important;}
-.dgl90-back-columns section{background:rgba(107,35,24,.08)!important;border:1px solid rgba(107,35,24,.30)!important;border-radius:7px!important;padding:6px!important;min-width:0!important;}
-.dgl90-back-columns h4,.dgl90-scouting h4{margin:0 0 5px!important;color:#6b2318!important;font-size:clamp(8px,1.45vw,13px)!important;text-transform:uppercase!important;letter-spacing:.05em!important;line-height:1!important;}
-.dgl90-back-columns dl{margin:0!important;display:grid!important;gap:0!important;}.dgl90-back-columns div{display:grid!important;grid-template-columns:1fr auto!important;gap:4px!important;border-bottom:1px solid rgba(107,35,24,.20)!important;padding:2px 0!important;}
-.dgl90-back-columns dt{color:#6b2318!important;font-size:clamp(6px,1.25vw,10px)!important;text-transform:uppercase!important;font-weight:1000!important;line-height:1.1!important;}.dgl90-back-columns dd{margin:0!important;color:#1a0903!important;text-align:right!important;font-size:clamp(6px,1.25vw,10px)!important;font-weight:900!important;line-height:1.1!important;max-width:70px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
-.dgl90-scouting{position:relative!important;z-index:3!important;margin-top:7px!important;border:1px solid rgba(107,35,24,.32)!important;background:rgba(255,255,255,.22)!important;border-radius:7px!important;padding:7px!important;}.dgl90-scouting p{margin:0!important;color:#1a0903!important;font-size:clamp(7px,1.4vw,12px)!important;line-height:1.18!important;font-weight:750!important;display:-webkit-box!important;-webkit-line-clamp:4!important;-webkit-box-orient:vertical!important;overflow:hidden!important;}
-.dgl90-achievements{position:relative!important;z-index:3!important;margin-top:7px!important;padding:5px 7px!important;border-radius:4px!important;background:#6b2318!important;color:#fff1bf!important;font-size:clamp(6px,1.35vw,11px)!important;font-weight:900!important;letter-spacing:.05em!important;text-transform:uppercase!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
-.dgl90-back-foot{position:absolute!important;z-index:3!important;left:5.2%!important;right:5.2%!important;bottom:4.2%!important;display:flex!important;justify-content:space-between!important;gap:8px!important;color:#6b2318!important;font-size:clamp(6px,1.28vw,11px)!important;font-weight:1000!important;text-transform:uppercase!important;border-top:1px solid rgba(107,35,24,.35)!important;padding-top:4px!important;}
-
-/* Sportsbook v90 polish */
-.dgl84-book-page{background:radial-gradient(circle at 50% -10%,rgba(255,220,109,.16),transparent 35%),linear-gradient(180deg,#100807,#040101 78%)!important;}
-.dgl84-book-hero{text-align:center!important;padding:42px 18px 24px!important;}.dgl84-book-hero h1{font-size:clamp(54px,12vw,128px)!important;line-height:.82!important;letter-spacing:-.08em!important;}.dgl84-book-hero span{color:#e72539!important;}.dgl84-book-topgrid,.dgl84-odds-board{width:min(1120px,calc(100% - 28px))!important;margin-left:auto!important;margin-right:auto!important;}.dgl84-book-topgrid{display:grid!important;grid-template-columns:.85fr 1.15fr!important;gap:16px!important;margin-bottom:16px!important;}.dgl84-favorite-ticket,.dgl84-market-card,.dgl84-odds-board{border:1px solid rgba(255,220,109,.28)!important;border-radius:26px!important;background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.03)),rgba(4,1,1,.72)!important;box-shadow:0 24px 70px rgba(0,0,0,.42)!important;backdrop-filter:blur(10px)!important;}.dgl84-favorite-ticket{padding:24px!important;text-align:center!important;}.dgl84-favorite-ticket h2{font-size:clamp(28px,5vw,54px)!important;}.dgl84-favorite-ticket b{display:block!important;color:#e72539!important;font-size:clamp(48px,9vw,90px)!important;font-weight:1000!important;line-height:.9!important;}.dgl84-market-card{padding:18px!important;display:grid!important;gap:10px!important;}.dgl84-market-card div{display:grid!important;grid-template-columns:1fr auto!important;gap:4px 12px!important;padding:12px!important;border-radius:16px!important;background:rgba(255,255,255,.045)!important;border:1px solid rgba(255,220,109,.12)!important;}.dgl84-market-card span{grid-column:1/-1!important;color:#ffdc6d!important;font-size:11px!important;text-transform:uppercase!important;letter-spacing:.09em!important;font-weight:1000!important;}.dgl84-market-card b{color:#fff!important;font-size:18px!important;}.dgl84-market-card em{color:#e72539!important;font-size:24px!important;font-weight:1000!important;font-style:normal!important;}.dgl84-odds-board{padding:18px!important;margin-bottom:40px!important;}.dgl84-board-head{display:flex!important;align-items:end!important;justify-content:space-between!important;border-bottom:1px solid rgba(255,220,109,.22)!important;padding-bottom:12px!important;margin-bottom:8px!important;}.dgl84-board-head p{color:#ffdc6d!important;text-transform:uppercase!important;letter-spacing:.16em!important;font-size:10px!important;font-weight:1000!important;margin:0 0 4px!important;}.dgl84-board-head h2{margin:0!important;}.dgl84-odds-table{display:grid!important;}.dgl84-odds-header,.dgl84-odds-row{display:grid!important;grid-template-columns:58px 1.35fr .75fr .72fr 82px 112px 130px!important;gap:10px!important;align-items:center!important;}.dgl84-odds-header{padding:10px 8px!important;color:#ffdc6d!important;text-transform:uppercase!important;letter-spacing:.1em!important;font-size:10px!important;font-weight:1000!important;}.dgl84-odds-row{padding:13px 8px!important;border-top:1px solid rgba(255,255,255,.08)!important;}.dgl84-odds-row strong{color:#fff!important;}.dgl84-rank,.dgl84-odds-price{color:#e72539!important;font-weight:1000!important;}.dgl84-move-pill,.dgl84-value-pill{display:inline-flex!important;align-items:center!important;justify-content:center!important;border-radius:999px!important;padding:7px 9px!important;font-size:11px!important;font-weight:1000!important;white-space:nowrap!important;}.dgl84-move-pill.up{background:rgba(43,205,120,.13)!important;color:#63f0a7!important;border:1px solid rgba(99,240,167,.28)!important;}.dgl84-move-pill.down{background:rgba(231,37,57,.14)!important;color:#ff7080!important;border:1px solid rgba(255,112,128,.28)!important;}.dgl84-move-pill.flat{background:rgba(255,255,255,.08)!important;color:#fff8e8!important;border:1px solid rgba(255,255,255,.18)!important;}.dgl84-value-pill.strong{background:rgba(255,92,92,.16)!important;color:#ffdc6d!important;border:1px solid rgba(255,220,109,.32)!important;}.dgl84-value-pill.good{background:rgba(43,205,120,.14)!important;color:#66efab!important;border:1px solid rgba(102,239,171,.30)!important;}.dgl84-value-pill.fair{background:rgba(255,255,255,.08)!important;color:#fff8e8!important;border:1px solid rgba(255,255,255,.18)!important;}.dgl84-value-pill.bad{background:rgba(231,37,57,.15)!important;color:#ff7885!important;border:1px solid rgba(255,120,133,.30)!important;}
-
-@media(max-width:820px){.dgl84-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:11px!important;margin-top:28px!important;padding:0 9px 28px!important}.dgl90-card{border-radius:18px!important;}.dgl90-face{border-radius:18px!important}.dgl90-front-stock,.dgl90-back-stock{border-width:5px!important;border-radius:18px!important;padding:7px!important;box-shadow:inset 0 0 0 2px rgba(76,34,12,.62),inset 0 0 0 5px #fff1c6,inset 0 0 22px rgba(0,0,0,.24)!important}.dgl90-topline{height:7%!important;font-size:6px!important}.dgl90-topline b{font-size:5.5px!important;padding:2px 4px!important}.dgl90-photo-frame{height:66%!important;border-width:4px!important;border-radius:8px 8px 0 0!important}.dgl90-logo-stamp{border-width:2px!important;border-radius:7px!important;padding:2px!important}.dgl90-logo-stamp strong{font-size:20px!important}.dgl90-logo-stamp span{font-size:5px!important}.dgl90-number-medallion{border-width:2px!important;font-size:17px!important}.dgl90-nameplate{min-height:16%!important;padding:5px 30% 5px 7px!important;border-left-width:4px!important;border-right-width:4px!important;border-bottom-width:3px!important;border-radius:0 0 9px 9px!important}.dgl90-nameplate:before{height:4px!important}.dgl90-name-copy h2{font-size:clamp(16px,5.4vw,25px)!important;line-height:.82!important}.dgl90-name-copy p{font-size:6px!important;margin-top:2px!important}.dgl90-headshot-ring{width:25.5%!important;right:5.8%!important;top:65.8%!important;padding:2px!important;border-width:1px!important}.dgl90-headshot,.dgl90-headshot-ring .player-photo,.dgl90-headshot-ring .player-photo-fallback{border-width:1px!important}.dgl90-front-footer{height:6.8%!important;margin-top:3.8%!important;font-size:5.5px!important;padding:0 5px!important;border-width:1px!important}.dgl90-back-header{grid-template-columns:20px 1fr auto!important;gap:4px!important;padding-bottom:4px!important;margin-bottom:4px!important;border-bottom-width:3px!important}.dgl90-back-logo{width:20px!important;height:20px!important;border-width:1px!important;border-radius:4px!important}.dgl90-back-logo strong{font-size:10px!important}.dgl90-back-logo span{font-size:4px!important;margin-top:-5px!important}.dgl90-back-header p{font-size:5px!important}.dgl90-back-header h3{font-size:13px!important}.dgl90-back-header span{font-size:5.2px!important}.dgl90-back-header>b{font-size:11px!important}.dgl90-back-idline{margin-bottom:4px!important}.dgl90-back-idline span{font-size:4.7px!important;padding:3px 1px!important}.dgl90-back-columns{gap:4px!important}.dgl90-back-columns section{padding:4px!important;border-radius:5px!important}.dgl90-back-columns h4,.dgl90-scouting h4{font-size:5.6px!important;margin-bottom:2px!important}.dgl90-back-columns div{padding:1px 0!important}.dgl90-back-columns dt,.dgl90-back-columns dd{font-size:5.1px!important}.dgl90-scouting{margin-top:4px!important;padding:4px!important;border-radius:5px!important}.dgl90-scouting p{font-size:5.4px!important;line-height:1.12!important;-webkit-line-clamp:3!important}.dgl90-achievements{margin-top:4px!important;padding:3px 4px!important;font-size:5px!important}.dgl90-back-foot{left:8px!important;right:8px!important;bottom:6px!important;font-size:5px!important;padding-top:3px!important}.dgl84-book-topgrid{grid-template-columns:1fr!important;width:calc(100% - 20px)!important}.dgl84-odds-board{width:calc(100% - 20px)!important;padding:12px!important}.dgl84-odds-header{display:none!important}.dgl84-odds-row{grid-template-columns:42px 1fr 75px!important;gap:7px!important;padding:12px 4px!important}.dgl84-odds-row span:nth-child(3),.dgl84-odds-row span:nth-child(4){display:none!important}.dgl84-move-pill,.dgl84-value-pill{grid-column:2/-1!important;justify-content:flex-start!important;width:max-content!important;font-size:10px!important;padding:6px 8px!important}.dgl84-odds-price{text-align:right!important}}
-
-/* ===== v93 stable card finish: parser-safe visual pass ===== */
-.dgl84-card-grid {
-  margin-top: 28px !important;
-  padding: 0 12px 40px !important;
-}
-
-.dgl90-card {
-  filter: drop-shadow(0 28px 36px rgba(0,0,0,.52)) !important;
-}
-
-.dgl90-front-stock,
-.dgl90-back-stock {
-  border-color: #ead9a8 !important;
-  background-blend-mode: screen, normal, normal !important;
-}
-
-.dgl90-front-stock:before,
-.dgl90-back-stock:before {
-  opacity: .9 !important;
-}
-
-.dgl90-front-stock:after,
-.dgl90-back-stock:after {
-  content: "" !important;
-  position: absolute !important;
-  inset: 0 !important;
-  pointer-events: none !important;
-  background:
-    radial-gradient(circle at 0 0, rgba(0,0,0,.16), transparent 18%),
-    radial-gradient(circle at 100% 0, rgba(0,0,0,.11), transparent 18%),
-    radial-gradient(circle at 0 100%, rgba(0,0,0,.13), transparent 20%),
-    radial-gradient(circle at 100% 100%, rgba(0,0,0,.17), transparent 20%),
-    repeating-linear-gradient(22deg, rgba(255,255,255,.025) 0 1px, transparent 1px 7px) !important;
-  mix-blend-mode: multiply !important;
-  opacity: .7 !important;
-}
-
-.dgl90-photo-frame {
-  height: 68% !important;
-  border-color: #fff2c8 !important;
-  box-shadow:
-    inset 0 0 0 2px rgba(31,13,4,.62),
-    inset 0 0 24px rgba(0,0,0,.18),
-    0 12px 24px rgba(0,0,0,.38) !important;
-}
-
-.dgl90-action-photo,
-.dgl90-photo-frame .player-photo,
-.dgl90-photo-frame .player-photo-fallback {
-  filter: saturate(.92) contrast(.98) sepia(.05) !important;
-}
-
-.dgl90-photo-grain {
-  background:
-    linear-gradient(180deg, transparent 64%, rgba(0,0,0,.25)),
-    repeating-linear-gradient(0deg, rgba(255,255,255,.05) 0 1px, transparent 1px 4px),
-    repeating-linear-gradient(90deg, rgba(0,0,0,.035) 0 1px, transparent 1px 5px) !important;
-  opacity: .75 !important;
-}
-
-.dgl90-nameplate {
-  min-height: 15.5% !important;
-  padding-right: 30% !important;
-  box-shadow:
-    inset 0 2px 0 rgba(255,255,255,.52),
-    inset 0 -5px 0 rgba(86,39,5,.25),
-    0 5px 12px rgba(0,0,0,.28) !important;
-}
-
-.dgl90-name-copy h2 {
-  font-size: clamp(24px, 6.6vw, 54px) !important;
-}
-
-.dgl90-headshot-ring {
-  width: 28% !important;
-  right: 5.4% !important;
-  top: 65% !important;
-  z-index: 12 !important;
-}
-
-.dgl90-number-medallion {
-  background:
-    radial-gradient(circle at 30% 20%, #fff9d0, #ffd978 35%, #b97918 72%, #fff0a1) !important;
-  box-shadow:
-    inset 0 2px 0 rgba(255,255,255,.65),
-    inset 0 -4px 0 rgba(80,30,0,.22),
-    0 5px 0 rgba(0,0,0,.22),
-    0 0 18px rgba(255,220,109,.18) !important;
-}
-
-.dgl90-front-footer {
-  margin-top: 3.6% !important;
-}
-
-.dgl90-back-stock {
-  background:
-    radial-gradient(circle at 15% 8%, rgba(255,255,255,.35), transparent 16%),
-    repeating-linear-gradient(90deg, rgba(110,39,25,.05) 0 1px, transparent 1px 12px),
-    repeating-linear-gradient(0deg, rgba(255,255,255,.04) 0 1px, transparent 1px 6px),
-    linear-gradient(180deg,#fff1bf,#e6c270) !important;
-}
-
-.dgl90-back-columns section,
-.dgl90-scouting {
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.13) !important;
-}
-
-.dgl90-achievements {
-  display: block !important;
-}
-
-@media(max-width:820px){
-  .dgl90-photo-frame{height:67%!important;}
-  .dgl90-headshot-ring{width:28.5%!important;right:5.2%!important;top:64.7%!important;}
-  .dgl90-nameplate{min-height:15.5%!important;padding-right:31%!important;}
-  .dgl90-name-copy h2{font-size:clamp(17px,5.7vw,26px)!important;}
-}
-
-
-/* ===== v94 card component replacement polish ===== */
-.dgl84-card-grid {
-  position: relative !important;
-  z-index: 6 !important;
-  width: min(100%, 1180px) !important;
-  margin: 30px auto 48px !important;
-  padding: 0 16px 36px !important;
-  display: grid !important;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  gap: 22px !important;
-}
-@media (min-width: 1180px) { .dgl84-card-grid { grid-template-columns: repeat(3, minmax(0,1fr)) !important; max-width: 1280px !important; } }
-.dgl84-card {
-  aspect-ratio: 5 / 7.15 !important;
-  height: auto !important;
-  filter: drop-shadow(0 24px 34px rgba(0,0,0,.48));
-}
-.dgl84-card-paper {
-  padding: 16px !important;
-  background:
-    radial-gradient(circle at 20% 10%, rgba(255,255,255,.22), transparent 16%),
-    repeating-linear-gradient(90deg, rgba(255,255,255,.045) 0 2px, rgba(0,0,0,.032) 2px 8px),
-    linear-gradient(180deg, color-mix(in srgb, var(--card-color) 88%, #fff 4%), color-mix(in srgb, var(--card-color) 74%, #000 17%)) !important;
-}
-.dgl84-photo-box {
-  height: 63% !important;
-  border-width: 6px !important;
-  border-color: #fff2c8 !important;
-  border-radius: 15px 15px 0 0 !important;
-  overflow: hidden !important;
-}
-.dgl84-action-photo,
-.dgl84-photo-box .player-photo,
-.dgl84-photo-box .player-photo-fallback {
-  object-fit: cover !important;
-  width: 100% !important;
-  height: 100% !important;
-}
-.dgl84-name-banner {
-  position: relative !important;
-  z-index: 5 !important;
-  min-height: 17.5% !important;
-  margin-top: 0 !important;
-  padding: 10px 31% 9px 16px !important;
-  border-left: 6px solid #fff2c8 !important;
-  border-right: 6px solid #fff2c8 !important;
-  border-bottom: 5px solid #fff2c8 !important;
-  border-radius: 0 0 15px 15px !important;
-  background:
-    radial-gradient(circle at 82% 0%, rgba(255,255,255,.38), transparent 30%),
-    linear-gradient(180deg, #fff5bb 0%, #efca56 48%, #bf7918 100%) !important;
-}
-.dgl84-name-banner h2 {
-  font-size: clamp(27px, 6.2vw, 58px) !important;
-  line-height: .82 !important;
-  letter-spacing: -.035em !important;
-}
-.dgl84-name-banner p {
-  color: #7a111b !important;
-  font-family: Georgia, 'Times New Roman', serif !important;
-  font-size: clamp(10px, 2.1vw, 20px) !important;
-  line-height: 1 !important;
-  text-transform: uppercase !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-}
-.dgl84-mini-portrait {
-  position: absolute !important;
-  right: 8.5% !important;
-  top: 60.5% !important;
-  width: 25.5% !important;
-  aspect-ratio: 1 !important;
-  height: auto !important;
-  z-index: 8 !important;
-  border-radius: 999px !important;
-  padding: 4px !important;
-  background: radial-gradient(circle at 28% 22%, #fff8d2, #d4a13b 48%, #85460b 72%, #fff0a7) !important;
-  border: 3px solid #1e0a05 !important;
-  box-shadow: 0 8px 15px rgba(0,0,0,.52), inset 0 0 0 1px rgba(255,255,255,.50) !important;
-}
-.dgl84-card-number {
-  width: 18% !important;
-  right: 4.5% !important;
-  top: 4.5% !important;
-  border: 4px solid #ba3023 !important;
-  background: #f7e7b6 !important;
-  color: #1c0804 !important;
-  font-size: clamp(25px, 7vw, 49px) !important;
-}
-.dgl84-dgl-mark {
-  left: 4.5% !important;
-  top: 4.5% !important;
-}
-.dgl84-stat-footer {
-  height: 10% !important;
-  margin-top: 5% !important;
-  border-color: #1e0a05 !important;
-  background: #b52f22 !important;
-  box-shadow: inset 0 0 0 2px #f8eabf !important;
-}
-.dgl84-back-paper {
-  background:
-    radial-gradient(circle at 15% 10%, rgba(255,255,255,.34), transparent 18%),
-    repeating-linear-gradient(90deg, rgba(110,39,25,.045) 0 1px, transparent 1px 12px),
-    linear-gradient(180deg, #fff1bf, #e8c66f) !important;
-  color: #1a0903 !important;
-  padding: 18px !important;
-}
-.dgl84-back-title,
-.dgl84-back-columns,
-.dgl84-scouting,
-.dgl84-back-foot { text-align: left !important; }
-.dgl84-back-columns { display: grid !important; grid-template-columns: 1fr 1fr !important; }
-.dgl84-back-columns dl div { display: grid !important; grid-template-columns: .82fr 1fr !important; }
-.dgl84-back-columns dt { text-align: left !important; }
-.dgl84-back-columns dd { text-align: right !important; }
-
-@media (max-width: 820px) {
-  .dgl84-card-grid { grid-template-columns: repeat(2, minmax(0,1fr)) !important; gap: 10px !important; padding: 0 10px 28px !important; margin-top: 28px !important; }
-  .dgl84-card-paper { padding: 8px !important; }
-  .dgl84-photo-box { height: 61% !important; border-width: 4px !important; }
-  .dgl84-name-banner { min-height: 18% !important; padding: 6px 31% 5px 8px !important; border-left-width: 4px !important; border-right-width: 4px !important; border-bottom-width: 3px !important; }
-  .dgl84-name-banner h2 { font-size: clamp(17px, 5.8vw, 28px) !important; }
-  .dgl84-name-banner p { font-size: 6.5px !important; }
-  .dgl84-mini-portrait { top: 58.5% !important; width: 27% !important; right: 6% !important; padding: 2px !important; border-width: 1px !important; }
-  .dgl84-card-number { border-width: 2px !important; font-size: clamp(13px, 4vw, 20px) !important; }
-  .dgl84-stat-footer { height: 8.8% !important; margin-top: 4% !important; }
-  .dgl84-stat-footer small { font-size: 5px !important; }
-  .dgl84-stat-footer b { font-size: 9px !important; }
-  .dgl84-back-paper { padding: 9px !important; }
-  .dgl84-back-title h3 { font-size: 14px !important; }
-  .dgl84-back-title p, .dgl84-back-title span { font-size: 5.8px !important; }
-  .dgl84-back-columns { gap: 5px !important; margin-top: 5px !important; }
-  .dgl84-back-columns section { padding: 4px !important; border-width: 1px !important; }
-  .dgl84-back-columns h4, .dgl84-scouting h4 { font-size: 6px !important; margin-bottom: 3px !important; }
-  .dgl84-back-columns dt, .dgl84-back-columns dd { font-size: 5.3px !important; }
-  .dgl84-scouting { padding: 4px !important; margin-top: 5px !important; border-width: 1px !important; }
-  .dgl84-scouting p { font-size: 5.6px !important; line-height: 1.16 !important; -webkit-line-clamp: 4 !important; }
-  .dgl84-back-foot { left: 10px !important; right: 10px !important; bottom: 7px !important; font-size: 5px !important; }
-}
-
-/* ===== v95 card layout correction: photo-first, smaller nameplate, portrait ON TOP ===== */
-.dgl84-card-grid {
-  gap: 18px !important;
-}
-
-.dgl84-card-paper {
-  padding: 13px !important;
-  overflow: hidden !important;
-}
-
-.dgl84-top-ribbon {
-  height: 24px !important;
-  font-size: 9px !important;
-  letter-spacing: .11em !important;
-}
-.dgl84-top-ribbon b {
-  font-size: 7px !important;
-  padding: 3px 7px !important;
-}
-
-/* Bigger action photo, closer to real card proportions */
-.dgl84-photo-box {
-  height: 69% !important;
-  border: 5px solid #1f0d06 !important;
-  border-radius: 14px 14px 0 0 !important;
-  box-shadow: inset 0 0 0 4px #fff0bd, 0 12px 22px rgba(0,0,0,.34) !important;
-}
-
-/* Smaller, lower nameplate — no longer dominates the card */
-.dgl84-name-banner {
-  min-height: 13.5% !important;
-  height: 13.5% !important;
-  padding: 6px 32% 5px 13px !important;
-  border-left: 5px solid #1f0d06 !important;
-  border-right: 5px solid #1f0d06 !important;
-  border-bottom: 5px solid #1f0d06 !important;
-  border-radius: 0 0 15px 15px !important;
-  z-index: 10 !important;
-}
-.dgl84-name-banner h2 {
-  font-size: clamp(27px, 6.4vw, 43px) !important;
-  line-height: .78 !important;
-  letter-spacing: -.035em !important;
-}
-.dgl84-name-banner p {
-  margin-top: 3px !important;
-  font-size: clamp(8px, 1.7vw, 13px) !important;
-  line-height: 1 !important;
-}
-
-/* Portrait must sit IN FRONT of the nameplate, not behind it */
-.dgl84-mini-portrait {
-  top: 65.5% !important;
-  bottom: auto !important;
-  right: 7.5% !important;
-  width: 28.5% !important;
-  height: auto !important;
-  aspect-ratio: 1 !important;
-  z-index: 50 !important;
-  padding: 4px !important;
-  transform: translateY(-50%) !important;
-  pointer-events: none !important;
-}
-.dgl84-mini-portrait .player-photo,
-.dgl84-mini-portrait .player-photo-fallback,
-.dgl84-headshot {
-  position: relative !important;
-  z-index: 51 !important;
-  object-fit: cover !important;
-}
-
-/* Hide cramped front stats; the back carries detailed stats */
-.dgl84-stat-footer {
-  display: none !important;
-}
-
-/* Make the visible bottom feel intentional after removing stat strip */
-.dgl84-card-paper:before {
-  content: 'OFFICIAL DGL CARD' !important;
-  position: absolute !important;
-  left: 23px !important;
-  right: 23px !important;
-  bottom: 16px !important;
-  height: 22px !important;
-  z-index: 9 !important;
-  display: grid !important;
-  place-items: center !important;
-  color: rgba(255,240,189,.86) !important;
-  font-family: Georgia, 'Times New Roman', serif !important;
-  font-size: 10px !important;
-  letter-spacing: .12em !important;
-  font-weight: 900 !important;
-  text-transform: uppercase !important;
-  border-top: 1px solid rgba(255,240,189,.28) !important;
-}
-
-/* Stronger paper / worn printed edge */
-.dgl84-card-face:after {
-  content: '' !important;
-  position: absolute !important;
-  inset: 0 !important;
-  border-radius: inherit !important;
-  pointer-events: none !important;
-  background:
-    radial-gradient(circle at 4% 4%, rgba(0,0,0,.18), transparent 9%),
-    radial-gradient(circle at 96% 5%, rgba(0,0,0,.14), transparent 8%),
-    radial-gradient(circle at 4% 96%, rgba(0,0,0,.16), transparent 9%),
-    radial-gradient(circle at 96% 96%, rgba(0,0,0,.14), transparent 8%),
-    repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0 1px, transparent 1px 4px) !important;
-  mix-blend-mode: multiply !important;
-  opacity: .45 !important;
-}
-
-/* Cleaner back layout, less centered/website-like */
-.dgl84-card-back .dgl84-back-paper {
-  padding: 16px !important;
-}
+  position: relative; z-index: 2; background: linear-gradient(180deg,#e8542c,#9c3015);
+  border: 2px solid #231407; border-radius: clamp(6px,1.8vw,10px); padding: clamp(7px,2vw,10px) clamp(9px,2.6vw,14px);
+  display: flex; align-items: center; justify-content: space-between; gap: 6px;
+  box-shadow: inset 0 1px 1px rgba(255,255,255,.25), 0 3px 6px rgba(0,0,0,.3);
+}
+.dgl84-back-logo { display: none; } /* superseded by name+number layout below */
+.dgl84-back-title h3 {
+  margin: 0; font-size: clamp(14px, 4.6vw, 25px); color: #f2e2ab; letter-spacing: -.01em;
+  text-shadow: 0 1px 1px rgba(0,0,0,.4); font-family: 'Anton','Oswald',sans-serif; text-transform: uppercase;
+  line-height: 1.05;
+}
+.dgl84-back-title p { display: none; }
+.dgl84-back-title > div { flex: 1; min-width: 0; }
+.dgl84-back-title span {
+  display: block; margin-top: 2px; font-size: clamp(9px,2.6vw,13px); color: #231407;
+  font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: .02em; font-weight: 700;
+}
+
+.dgl84-back-columns {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-top: clamp(6px,1.8vw,9px);
+  background: linear-gradient(160deg,#f5c948,#d99a12); border: 2px solid #231407; border-radius: clamp(6px,1.8vw,10px);
+  overflow: hidden; box-shadow: inset 0 1px 1px rgba(255,255,255,.35);
+}
+.dgl84-back-columns section { padding: clamp(6px,2vw,9px) clamp(7px,2.2vw,10px); }
+.dgl84-back-columns section:first-child { border-right: 1.5px dashed rgba(0,0,0,.4); }
+.dgl84-back-columns h4 {
+  margin: 0 0 5px; font-size: clamp(7.5px,2.1vw,10px); color: #9c3015; letter-spacing: .03em;
+  font-family: 'Oswald', sans-serif; text-transform: uppercase;
+}
+.dgl84-back-columns dl { margin: 0; }
 .dgl84-back-columns dl div {
-  grid-template-columns: 1fr auto !important;
-  gap: 6px !important;
+  display: flex; align-items: baseline; gap: 3px; margin-bottom: 3px;
+  font-size: clamp(7px,1.9vw,9px); font-family: Georgia, serif;
 }
-.dgl84-back-columns dt,
+.dgl84-back-columns dt { color: #231407; font-weight: 700; white-space: nowrap; }
+.dgl84-back-columns dt:after {
+  content: ""; display: inline-block; width: 100%; margin: 0 3px;
+  border-bottom: 1.5px dotted rgba(0,0,0,.6); transform: translateY(-3px);
+}
+.dgl84-back-columns dt { flex: 1; overflow: hidden; }
 .dgl84-back-columns dd {
-  font-size: 9px !important;
-  line-height: 1.05 !important;
+  margin: 0; color: #231407; font-size: clamp(8px,2.2vw,10.5px); white-space: nowrap; font-weight: 700;
 }
-.dgl84-back-columns h4,
+
+.dgl84-scouting {
+  margin-top: clamp(6px,1.8vw,8px); flex: 1; min-height: 0;
+  background: linear-gradient(160deg,#3fada0,#1f6b64); border: 2px solid #231407; border-radius: clamp(6px,1.8vw,10px);
+  padding: clamp(8px,2.4vw,11px) clamp(9px,2.8vw,13px);
+  box-shadow: inset 0 1px 1px rgba(255,255,255,.2);
+  display: flex; flex-direction: column;
+}
 .dgl84-scouting h4 {
-  font-size: 10px !important;
+  margin: 0 0 6px; text-align: center; color: #f0b429; font-size: clamp(7.5px,2.1vw,10px);
+  letter-spacing: .06em; font-family: 'Oswald', sans-serif; text-transform: uppercase;
 }
+.dgl84-scouting h4:before { content: "★ "; }
+.dgl84-scouting h4:after { content: " ★"; }
 .dgl84-scouting p {
-  font-size: 10px !important;
-  line-height: 1.25 !important;
+  margin: 0; text-align: center; color: #0d1613; font-size: clamp(7.5px,2vw,9.5px); line-height: 1.5;
+  font-weight: 600; font-family: Georgia, serif;
+  display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden;
 }
 
-@media (max-width: 820px) {
-  .dgl84-card-grid {
-    gap: 12px !important;
-    padding: 0 10px 28px !important;
-  }
-  .dgl84-card-paper {
-    padding: 7px !important;
-  }
-  .dgl84-top-ribbon {
-    height: 16px !important;
-    font-size: 5.6px !important;
-    letter-spacing: .08em !important;
-  }
-  .dgl84-top-ribbon b {
-    font-size: 5px !important;
-    padding: 2px 4px !important;
-  }
-  .dgl84-photo-box {
-    height: 68.5% !important;
-    border-width: 3px !important;
-    border-radius: 8px 8px 0 0 !important;
-    box-shadow: inset 0 0 0 2px #fff0bd, 0 7px 12px rgba(0,0,0,.32) !important;
-  }
-  .dgl84-name-banner {
-    height: 13.5% !important;
-    min-height: 13.5% !important;
-    padding: 4px 32% 4px 7px !important;
-    border-left-width: 3px !important;
-    border-right-width: 3px !important;
-    border-bottom-width: 3px !important;
-    border-radius: 0 0 8px 8px !important;
-  }
-  .dgl84-name-banner h2 {
-    font-size: clamp(15px, 5.2vw, 23px) !important;
-    line-height: .80 !important;
-  }
-  .dgl84-name-banner p {
-    font-size: 5.8px !important;
-    margin-top: 1px !important;
-  }
-  .dgl84-mini-portrait {
-    top: 65% !important;
-    right: 6% !important;
-    width: 30% !important;
-    padding: 2px !important;
-    border-width: 1px !important;
-  }
-  .dgl84-card-paper:before {
-    left: 13px !important;
-    right: 13px !important;
-    bottom: 8px !important;
-    height: 14px !important;
-    font-size: 5.5px !important;
-  }
-  .dgl84-dgl-mark {
-    min-width: 37px !important;
-    padding: 3px 4px 2px !important;
-    border-width: 1px !important;
-    border-radius: 5px !important;
-  }
-  .dgl84-dgl-mark strong { font-size: 18px !important; }
-  .dgl84-dgl-mark span { font-size: 4px !important; }
-  .dgl84-card-number {
-    width: 31px !important;
-    height: 31px !important;
-    border-width: 2px !important;
-    font-size: 15px !important;
-  }
+.dgl84-back-foot {
+  position: relative; z-index: 2; margin-top: clamp(6px,1.8vw,8px);
+  display: flex; align-items: center; justify-content: space-between; padding: 0 3px;
 }
+.dgl84-back-foot span {
+  font-size: clamp(6.5px,1.8vw,9px); color: #9c3015; letter-spacing: .06em;
+  font-family: 'Oswald', sans-serif; text-transform: uppercase; font-weight: 700;
+}
+.dgl84-back-foot span:first-child:after { content: " \265B"; }
 
+/* ---------- edition accent colors ---------- */
+.dgl84-card.champion { --card-accent: #e8a828; }
+.dgl84-card.trophy { --card-accent: #b8791f; }
+.dgl84-card.redroom { --card-accent: #c73e1d; }
+.dgl84-card.rookie { --card-accent: #2f7ab8; }
+.dgl84-card.base { --card-accent: #e8542c; }
+
+/* ---------- mobile ---------- */
+@media (max-width: 720px) {
+  .dgl84-card-grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; padding: 0 10px 28px; margin-top: 24px; }
+}
 /* ===== v96: This Day multiple history entries ===== */
 .history-entry-list {
   display: grid;

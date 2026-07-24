@@ -174,6 +174,23 @@ function cleanName(value) {
     'Scoot Wishart': 'Scott Wishart',
     'Tim P.': 'Tim Perlick',
     'Tim P': 'Tim Perlick',
+    'Keegs': 'Keegan Anderson',
+    'Pletsch': 'Alex Pletsch',
+    'Jorgs': 'Jorgen Hoff',
+    'Rogers': 'Alex Rogers',
+    'J-Leitch': 'John Leitch',
+    'BMags': 'Ben Magnuson',
+    'Ben Mags': 'Ben Magnuson',
+    'Wishart': 'Scott Wishart',
+    'Nev': 'Brian Nevala',
+    'Brian Nev': 'Brian Nevala',
+    'Pat-e-o': 'Pat Sheehy',
+    'SDM': 'Steven Mitchell',
+    'Le Kleven': 'Grant Kleven',
+    'Ramisch': 'Chris Ramisch',
+    'Oppe': 'Justin Oppe',
+    'Benson': 'Michael Benson',
+    'Dingmann': 'Chris Dingmann',
     'Max': 'Max Olson',
     'MAX': 'Max Olson',
     'Frank': 'Frank Rush',
@@ -377,6 +394,103 @@ function looksLikeTimeText(value) {
 }
 
 
+
+function parseCommittedPlayers(value = '') {
+  const seen = new Set();
+
+  return String(value || '')
+    .split(/[,;|\r\n]+/)
+    .map(cleanName)
+    .map(name => name.replace(/^[-•\s]+/, '').trim())
+    .filter(Boolean)
+    .filter(name => {
+      const key = canonicalName(name);
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+}
+
+function normalizeWinProbabilities(players = [], committedPlayers = []) {
+  const committedKeys = new Set((committedPlayers || []).map(canonicalName).filter(Boolean));
+  const pool = committedKeys.size
+    ? (players || []).filter(player => committedKeys.has(canonicalName(player.player || player.name)))
+    : [...(players || [])];
+
+  const weighted = pool.map(player => {
+    const explicit = Number(player.winPercent);
+    const rating = Number(player.rating);
+    const weight = Number.isFinite(explicit) && explicit > 0
+      ? explicit
+      : Number.isFinite(rating) && rating > 0
+        ? Math.exp((rating - 75) / 12)
+        : 1;
+
+    return {
+      ...player,
+      player: player.player || player.name || '',
+      probabilityWeight: weight
+    };
+  });
+
+  const total = weighted.reduce((sum, player) => sum + player.probabilityWeight, 0) || 1;
+
+  return weighted
+    .map(player => ({
+      ...player,
+      projectedWinProbability: player.probabilityWeight / total
+    }))
+    .sort((a, b) => b.projectedWinProbability - a.projectedWinProbability);
+}
+
+function calculateFieldStrength(committedPlayers = [], sportsbook = [], historicalFields = []) {
+  const committedKeys = new Set((committedPlayers || []).map(canonicalName).filter(Boolean));
+  const field = committedKeys.size
+    ? (sportsbook || []).filter(player => committedKeys.has(canonicalName(player.player || player.name)))
+    : [];
+
+  const ratings = field
+    .map(player => Number(player.rating))
+    .filter(value => Number.isFinite(value) && value > 0);
+
+  const averageRating = ratings.length
+    ? ratings.reduce((sum, value) => sum + value, 0) / ratings.length
+    : null;
+
+  const comparable = (historicalFields || [])
+    .map(item => Number(item.averageRating ?? item.avgRating ?? item.strength))
+    .filter(value => Number.isFinite(value) && value > 0)
+    .sort((a, b) => b - a);
+
+  if (!Number.isFinite(averageRating)) {
+    return {
+      averageRating: null,
+      fieldSize: committedKeys.size,
+      ratedPlayers: ratings.length,
+      historicalRank: null,
+      historicalEventCount: comparable.length,
+      percentile: null,
+      label: 'Rating unavailable'
+    };
+  }
+
+  const historicalRank = comparable.filter(value => value > averageRating).length + 1;
+  const historicalEventCount = comparable.length + 1;
+  const percentile = historicalEventCount > 1
+    ? Math.max(1, Math.round((1 - (historicalRank - 1) / historicalEventCount) * 100))
+    : 100;
+
+  return {
+    averageRating,
+    fieldSize: committedKeys.size,
+    ratedPlayers: ratings.length,
+    historicalRank,
+    historicalEventCount,
+    percentile,
+    label: `${ordinal(historicalRank)} toughest field`
+  };
+}
+
 function parseFutureEvents(text) {
   if (!text) return [];
 
@@ -418,18 +532,14 @@ function parseFutureEvents(text) {
       const committedPlayersRaw = valueAt([
         'Committed Players',
         'Players Committed',
-        'Committed',
-        'Notes/number of commits',
-        'Notes/number of competitors',
-        'Number of competitors',
-        'Number of commits',
-        'Notes'
+        'Committed'
       ], col);
-
-      const committedPlayers = committedPlayersRaw
-  .split(/[,\r\n;|]+/)
-  .map(cleanName)
-  .filter(Boolean);
+      const eventNotes = valueAt([
+        'Notes',
+        'Event Notes',
+        'Description'
+      ], col);
+      const committedPlayers = parseCommittedPlayers(committedPlayersRaw);
 
       events.push({
         week: valueAt(['Week'], col),
@@ -437,7 +547,7 @@ function parseFutureEvents(text) {
         date: cleanDate(rawDate),
         course: cleanCourse(rawCourse),
         time: cleanTime(valueAt(['Time', 'Tee Time'], col)),
-        notes: committedPlayersRaw,
+        notes: eventNotes,
         committedPlayers,
         photoUrl: normalizeAssetUrl(valueAt(['Photo of course', 'Course Photo', 'Photo'], col)),
         courseWebsite: valueAt(['Course website', 'Website'], col),
@@ -811,11 +921,17 @@ function numericValuesFromRow(row = [], startCol = 0) {
 
 function extractPlayerBlocks(sheet) {
   const blocks = [];
-  const playerNamePattern = /^[A-Z][A-Za-z.'-]+(?:\s+[A-Z][A-Za-z.'-]+|\s+T\.)$/;
 
   for (let row = 0; row < sheet.length; row++) {
     const rawName = textCell(sheet[row]?.[0]);
-    if (!rawName || !playerNamePattern.test(rawName)) continue;
+    if (!rawName) continue;
+
+    // Every historical standings tab stores a golfer in a three-row block:
+    // name/GHIN, NET, then DGLFC Points. This marker is more reliable than
+    // name shape alone because names may include awards ("2021 Champion"),
+    // while schedule labels such as Course, Tees, and Time look like names.
+    const hasPointsMarker = rowHasLabel(sheet[row + 2] || [], 'DGLFC Points');
+    if (!hasPointsMarker) continue;
 
     const blockRows = sheet.slice(row, Math.min(row + 6, sheet.length));
     const hasGolfLabels = blockRows.some(blockRow =>
@@ -933,13 +1049,18 @@ function findHistoricalStandingsColumns(sheet) {
   let rankCol = -1;
   let headerRow = -1;
 
-  for (let row = 0; row < Math.min(sheet.length, 30); row++) {
+  for (let row = 0; row < Math.min(sheet.length, 80); row++) {
     for (let col = 0; col < (sheet[row] || []).length; col++) {
       const header = normalizeHeader(sheet[row][col]);
 
       // Supports both "Total DGL Points" and the visually truncated
       // "Total DGL Point" seen in some historical sheets.
-      if (header.startsWith('totaldglpoint')) {
+      if (
+        header.startsWith('totaldglpoint') ||
+        header === 'totalpoints' ||
+        header === 'seasonpoints' ||
+        header === 'regularseasonpoints'
+      ) {
         totalCol = col;
         headerRow = row;
       }
@@ -981,31 +1102,148 @@ function nearestHistoricalPlayerName(sheet, rowIndex, maxLookback = 4) {
   return '';
 }
 
+function findHistoricalBlockStandingsColumns(sheet) {
+  const pointsRows = sheet.filter(row => rowHasLabel(row, 'DGLFC Points'));
+  if (pointsRows.length < 2) return { pointsCol: -1, rankCol: -1 };
+
+  const maxCol = Math.max(...pointsRows.map(row => row.length), 0);
+  let best = { pointsCol: -1, rankCol: -1, score: 0 };
+
+  // In the 2021–2023 sheets, the season total and rank are adjacent cells on
+  // every golfer's DGLFC Points row. Their columns move from year to year, so
+  // detect the pair by looking for a numeric total followed by an integer rank
+  // across the greatest number of player blocks.
+  for (let pointsCol = 4; pointsCol < maxCol - 1; pointsCol++) {
+    const rankCol = pointsCol + 1;
+    let validPairs = 0;
+    const ranks = [];
+
+    pointsRows.forEach(row => {
+      const points = strictNumberFromCell(row[pointsCol]);
+      const rank = strictNumberFromCell(row[rankCol]);
+      if (
+        points !== null &&
+        points >= 0 &&
+        rank !== null &&
+        Number.isInteger(rank) &&
+        rank >= 1 &&
+        rank <= pointsRows.length + 5
+      ) {
+        validPairs++;
+        ranks.push(rank);
+      }
+    });
+
+    const distinctRanks = new Set(ranks).size;
+    const score = validPairs * 10 + distinctRanks;
+    if (
+      validPairs >= Math.max(3, Math.ceil(pointsRows.length * 0.45)) &&
+      (score > best.score || (score === best.score && pointsCol > best.pointsCol))
+    ) {
+      best = { pointsCol, rankCol, score };
+    }
+  }
+
+  return { pointsCol: best.pointsCol, rankCol: best.rankCol };
+}
+
 function parseYearStandings(sheet) {
   const { totalCol, rankCol, headerRow } = findHistoricalStandingsColumns(sheet);
-  if (totalCol < 0) return [];
 
   const players = [];
   const seen = new Set();
 
-  for (let row = Math.max(0, headerRow + 1); row < sheet.length; row++) {
-    const points = strictNumberFromCell(sheet[row]?.[totalCol]);
-    const rank = rankCol >= 0 ? strictNumberFromCell(sheet[row]?.[rankCol]) : null;
+  const blockColumns = findHistoricalBlockStandingsColumns(sheet);
+  // 2024 and newer sheets include authoritative "Total DGL Points" and
+  // "Rank" headers. Read those exact columns from each player's DGLFC row.
+  // The adjacent-pair detector below exists only for older sheets that do not
+  // contain those headers; using it on newer sheets can mistake other numeric
+  // columns (payouts, percentages, etc.) for the standings total.
+  if (totalCol >= 0) {
+    extractPlayerBlocks(sheet).forEach(block => {
+      const pointsRow = findRowInBlock(block, 'DGLFC Points');
+      if (!pointsRow.length) return;
 
-    // A valid standings row has a numeric Total DGL Points value. Zero is valid.
-    if (points === null) continue;
+      const points = strictNumberFromCell(pointsRow[totalCol]);
+      const sheetRank = rankCol >= 0 ? strictNumberFromCell(pointsRow[rankCol]) : null;
+      if (points === null) return;
 
-    const name = nearestHistoricalPlayerName(sheet, row, 4);
-    if (!name) continue;
+      const key = canonicalName(block.name);
+      if (!key || seen.has(key)) return;
+      seen.add(key);
 
-    const key = canonicalName(name);
-    if (!key || seen.has(key)) continue;
-    seen.add(key);
+      players.push({
+        name: block.name,
+        points: Math.round(points * 100) / 100,
+        sheetRank: sheetRank && sheetRank > 0 ? sheetRank : null
+      });
+    });
+  } else if (blockColumns.pointsCol >= 0) {
+    extractPlayerBlocks(sheet).forEach(block => {
+      const pointsRow = findRowInBlock(block, 'DGLFC Points');
+      if (!pointsRow.length) return;
 
-    players.push({
-      name,
-      points: Math.round(points * 100) / 100,
-      sheetRank: rank && rank > 0 ? rank : null
+      const points = strictNumberFromCell(pointsRow[blockColumns.pointsCol]);
+      const sheetRank = strictNumberFromCell(pointsRow[blockColumns.rankCol]);
+      if (points === null) return;
+
+      const key = canonicalName(block.name);
+      if (!key || seen.has(key)) return;
+      seen.add(key);
+
+      players.push({
+        name: block.name,
+        points: Math.round(points * 100) / 100,
+        sheetRank: sheetRank && sheetRank > 0 ? sheetRank : null
+      });
+    });
+  } else if (totalCol >= 0) {
+    for (let row = Math.max(0, headerRow + 1); row < sheet.length; row++) {
+      const points = strictNumberFromCell(sheet[row]?.[totalCol]);
+      const rank = rankCol >= 0 ? strictNumberFromCell(sheet[row]?.[rankCol]) : null;
+
+      // A valid standings row has a numeric season-points value. Zero is valid.
+      if (points === null) continue;
+
+      const name = nearestHistoricalPlayerName(sheet, row, 6);
+      if (!name) continue;
+
+      const key = canonicalName(name);
+      if (!key || seen.has(key)) continue;
+      seen.add(key);
+
+      players.push({
+        name,
+        points: Math.round(points * 100) / 100,
+        sheetRank: rank && rank > 0 ? rank : null
+      });
+    }
+  }
+
+  // Final fallback for an unrecognized labeled-block layout.
+  if (!players.length) {
+    extractPlayerBlocks(sheet).forEach(block => {
+      const pointsRow = findRowInBlockAny(block, [
+        'Total DGL Points',
+        'Total Points',
+        'Season Points',
+        'Regular Season Points',
+        'DGLFC Points'
+      ]);
+      if (!pointsRow.length) return;
+
+      const points = lastNumericValue(pointsRow);
+      const key = canonicalName(block.name);
+      if (!key || seen.has(key)) return;
+      seen.add(key);
+
+      const rankRow = findRowInBlock(block, 'Rank');
+      const sheetRank = rankRow.length ? lastNumericValue(rankRow) : null;
+      players.push({
+        name: block.name,
+        points: Math.round(points * 100) / 100,
+        sheetRank: sheetRank && sheetRank > 0 ? sheetRank : null
+      });
     });
   }
 
@@ -1558,6 +1796,12 @@ async function loadLiveData() {
     return parsed.length ? parsed : fallbackData.annalsYears;
   });
   const sportsbook = safeParse('sportsbook', fallbackData.sportsbook, () => parseSportsbook(sportsbookText));
+  const eventAnalytics = events.map(event => ({
+    event: event.event,
+    course: event.course,
+    winProbabilities: normalizeWinProbabilities(sportsbook, event.committedPlayers),
+    fieldStrength: calculateFieldStrength(event.committedPlayers, sportsbook)
+  }));
   const players = safeParse('players', fallbackData.players, () => parsePlayers(playersText));
   const stateTrophies = safeParse('state trophies', fallbackData.stateTrophies, () => parseStateTrophies(stateTrophiesText));
 
@@ -1576,6 +1820,7 @@ async function loadLiveData() {
     annalsYears,
     annalsRecords,
     sportsbook,
+    eventAnalytics,
     players,
     stateTrophies,
     sourceStatus: {
@@ -1786,6 +2031,9 @@ export {
   cardHighlightColor,
   looksLikeDateText,
   looksLikeTimeText,
+  parseCommittedPlayers,
+  normalizeWinProbabilities,
+  calculateFieldStrength,
   parseFutureEvents,
   fetchFutureEventsSheet,
   parseThisDayHistory,
@@ -1808,6 +2056,7 @@ export {
   findHistoricalStandingsColumns,
   isHistoricalPlayerName,
   nearestHistoricalPlayerName,
+  findHistoricalBlockStandingsColumns,
   parseYearStandings,
   findSheetValueNearLabel,
   playerSlug,
