@@ -1,1 +1,0 @@
-Copy these folders into your project public folder. Future headshots go in public/players/player-name.jpg
