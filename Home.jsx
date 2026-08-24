@@ -51,25 +51,16 @@ function ThisDayInDGLHistory({ moments = [], goAnnals }) {
   );
 }
 
-function HomePage({ data, syncStatus, goRedRoom, goAnnals, goStateTrophies, goSportsbook, goPlayers }) {
-  const sourceData = data || {};
-  const historicalRounds = [
-    sourceData.historicalRounds,
-    sourceData.rounds,
-    sourceData.roundHistory,
-    sourceData.historicalResults
-  ].find(candidate => Array.isArray(candidate) && candidate.length > 0) || [];
-
+function HomePage({ data, syncStatus, goRedRoom, goAnnals, goStateTrophies, goSportsbook, goPlayers, goRules }) {
   data = {
     ...fallbackData,
-    ...sourceData,
-    standings: Array.isArray(sourceData.standings) ? sourceData.standings : [],
-    events: Array.isArray(sourceData.events) ? sourceData.events : [],
-    redRounds: Array.isArray(sourceData.redRounds) ? sourceData.redRounds : [],
-    historyMoments: Array.isArray(sourceData.historyMoments) ? sourceData.historyMoments : [],
-    sportsbook: Array.isArray(sourceData.sportsbook) ? sourceData.sportsbook : [],
-    historicalRounds,
-    sidePots: { ...fallbackData.sidePots, ...(sourceData.sidePots || {}) }
+    ...(data || {}),
+    standings: Array.isArray(data?.standings) ? data.standings : [],
+    events: Array.isArray(data?.events) ? data.events : [],
+    redRounds: Array.isArray(data?.redRounds) ? data.redRounds : [],
+    historyMoments: Array.isArray(data?.historyMoments) ? data.historyMoments : [],
+    sportsbook: Array.isArray(data?.sportsbook) ? data.sportsbook : [],
+    sidePots: { ...fallbackData.sidePots, ...(data?.sidePots || {}) }
   };
 
   const top10 = data.standings.slice(0, 10);
@@ -194,8 +185,6 @@ function HomePage({ data, syncStatus, goRedRoom, goAnnals, goStateTrophies, goSp
           events={data.events}
           sportsbook={data.sportsbook}
           leader={leader}
-          historicalRounds={data.historicalRounds}
-          rounds={data.historicalRounds}
         />
 
         <article className="card sportsbook-card" id="sportsbook">
@@ -219,6 +208,13 @@ function HomePage({ data, syncStatus, goRedRoom, goAnnals, goStateTrophies, goSp
           <h2>Player Profiles</h2>
           <p>Photos, nicknames, odds, Red Room appearances, DGLFC history, and state trophy résumés.</p>
           <button onClick={goPlayers} className="gold-button">VIEW PLAYERS</button>
+        </article>
+
+        <article className="card rules-entry-card">
+          <p className="eyebrow">League Law</p>
+          <h2>📜 Official Rules</h2>
+          <p>The governing rules of the DGL, presented exactly as recorded in the Official Rules sheet.</p>
+          <button onClick={goRules} className="gold-button">READ THE OFFICIAL RULES</button>
         </article>
       </section>
     </>
